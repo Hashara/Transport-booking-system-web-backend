@@ -6,5 +6,5 @@ admin.initializeApp({
     databaseURL: process.env.DATABASE
   });
 
-
+  
 module.exports = admin;
