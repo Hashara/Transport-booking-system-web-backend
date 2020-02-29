@@ -1,11 +1,11 @@
-// const admin = require('../firebase-admin/admin')
 const jwt = require('jsonwebtoken')
 
 const userModel = require('../models/user')
+
 const sgMail =require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-console.log(process.env.SENDGRID_API_KEY);
+
 
 exports.signup = (req, res) =>{
 
@@ -27,7 +27,7 @@ exports.signup = (req, res) =>{
         to:email,
         subject: 'Account activation link',
         html:`
-            <h>Please use the followuing link to activate your account</h>
+            <h1>Please use the following link to activate your account</h1>
             <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
             <hr />`
     }
@@ -46,57 +46,63 @@ exports.signup = (req, res) =>{
 })
          
 
+}
 
-   //create activation method for sign up
-    
+exports.activation = (req,res) =>{
+
+
+    const {token} = req.body
+
+    if (token) {
+        jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, function(err, decoded) {
+            if(err){
+                console.log('JWT VERIFY ERROR IN ACCOUNT ACTIVATION')
+                return res.status(401).json({
+                    error:' Expired link Signup again'
+                })            
+            }
+
+            
+            const {firstName, secondName, email, password, phoneNumber} = jwt.decode(token);
+
+            userModel.registerUser(firstName, secondName, email, password, phoneNumber,res)
+
+        // const user = new User({name,email, password}) 
+
+        //     user.save((err,user) =>{
+        //         if(err){
+        //             console.log('SAVE USER IN ACCOUNT ACTIVATION ERROR',err)
+        //             return res.status(401).json({
+        //                 error:'Error saving user,Try sign up again'
+        //             })
+        //         }
+        //         return res.json({
+        //             message:'Signup sucess.Please sign in'
+        //         })
+                
+        //     })
+        })
+    }
+    // else{
+    //     return res.json({
+    //         message:'Something went wrong please try again'
+    //     })
+    // }
+
+
     // const user = await admin.auth().createUser({
     //     email,
     //     password
     // }).then(()=>{
-    //     // res.send(user)
-    //     // return res.json({
-    //     //     message: `Email has been sent to ${email}`
-    //     // })
+        
     //     console.log("Signup sucessfully")
     // }).catch(err =>{
     //     return res.json({
     //         message: err.message
     //     })
-    // res.send(user)
-    // })
-
     
-
+    // })
 }
 
-// exports.signup = (req,res) =>{
-//     const { firstName,secondName, email, password, phoneNumber} = req.body
-
-//     admin.auth().createUser({ //Create user in authentication section of firebase
-//         email: email, //user email from request body
-//         emailVerified: false, //user email from request body
-//         password: md5(password), //hashed user password
-//         displayName: firstName+secondName, //user name from request body
-//         disabled: false
-//         })
-//          .then(function(userRecord) {
-//          console.log("Successfully created new user:", userRecord.uid);
-//          //add data to database
-//          var data = {
-//             firstName:firstName,
-//             secondName:secondName,
-//             phoneNumber:phoneNumber
-//            //Whatever data you would like to add for this user
-//          };
-//      var setDoc = db.collection('users').add(data);
-//          var userIDHash = md5(userRecord.uid);
-//          //adding hashed userid and userid to Email-Verifications collection
-//          var setHash = db.collection('Email-  Verifications').doc(userIDHash).set({userID:userRecord.uid});
-//          var verificationLink = `${process.env.CLIENT_URL}/confirm_email/` + userIDHash;
-//          sendVerificationEmail(useremail, verificationLink);
-//         return response.status(200).send(Success());
-//         })
-//         .catch(function(error) {
-//            console.log("Error creating new user:", error);
-//         });
-// }
+//todo: save the data in users
+//todo:set up sign up
