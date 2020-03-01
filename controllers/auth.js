@@ -67,42 +67,19 @@ exports.activation = (req,res) =>{
 
             userModel.registerUser(firstName, secondName, email, password, phoneNumber,res)
 
-        // const user = new User({name,email, password}) 
 
-        //     user.save((err,user) =>{
-        //         if(err){
-        //             console.log('SAVE USER IN ACCOUNT ACTIVATION ERROR',err)
-        //             return res.status(401).json({
-        //                 error:'Error saving user,Try sign up again'
-        //             })
-        //         }
-        //         return res.json({
-        //             message:'Signup sucess.Please sign in'
-        //         })
-                
-        //     })
         })
     }
-    // else{
-    //     return res.json({
-    //         message:'Something went wrong please try again'
-    //     })
-    // }
-
-
-    // const user = await admin.auth().createUser({
-    //     email,
-    //     password
-    // }).then(()=>{
-        
-    //     console.log("Signup sucessfully")
-    // }).catch(err =>{
-    //     return res.json({
-    //         message: err.message
-    //     })
-    
-    // })
+  
 }
 
-//todo: save the data in users
-//todo:set up sign up
+exports.signin = (req, res) =>{
+    const {email,phoneNumber, password} = req.body
+
+    //todo: check sign in by email or phone
+    //if email
+    userModel.signInbyEmail(email,password,res);
+    //if phone 
+    //todo: signin by phone number
+   
+}

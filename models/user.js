@@ -1,4 +1,5 @@
 const admin = require('../firebase-admin/admin')
+const firebaseClient = require('../firebase-admin/firebase')
 
 const db = admin.firestore();
 const UsersRef = db.collection('users');
@@ -41,7 +42,8 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
     await admin.auth().createUser({
         email,
         password,
-        phoneNumber
+        phoneNumber,
+        displayName:firstName+" "+secondName
     })
     .then(()=>{
 
@@ -80,3 +82,22 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
     
 }
 
+
+exports.signInbyEmail = (email,password,res)=>{
+
+    firebaseClient.auth().signInWithEmailAndPassword(email,password)
+    .then((user) =>{
+        
+        console.log(user)
+        return res.json({
+            message:"Sign in success",
+            user
+        })
+    })
+    .catch((error)=>{
+        res.status(400)
+        return res.json({
+            error:error.message
+        })
+    })
+}
