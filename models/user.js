@@ -73,6 +73,9 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
         });
 
         //todo:role based database
+        //todo:wtite if {} for role base 
+        //admin,owner,passenger,conductor
+        //create owner,pessenger,conductor 
         return res.json({
             message: "Activation success"
         })
