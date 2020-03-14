@@ -18,6 +18,7 @@
     "express-validator": "^6.4.0",
     "firebase": "^7.9.3",
     "firebase-admin": "^8.9.2",
+    "firebase-tools": "^7.3.1",
     "gtfs-realtime-bindings": "0.0.5",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",

@@ -101,3 +101,5 @@ exports.signInbyEmail = (email,password,res)=>{
         })
     })
 }
+
+//todo:signInwithPhone
