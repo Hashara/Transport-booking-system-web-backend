@@ -72,6 +72,7 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
             "phone-verified": false
         });
 
+        //todo:role based database
         return res.json({
             message: "Activation success"
         })
