@@ -36,7 +36,7 @@ exports.findMobile = (res,phoneNumber) => {
     });
 }
 
-exports.registerUser = async(firstName, secondName, email, password, phoneNumber,res) => {
+exports.registerUser = async(firstName, secondName, email, password, phoneNumber, role, res) => {
 
     //add user for firebase auth
     await admin.auth().createUser({
@@ -67,7 +67,9 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
             "firstName":firstName, 
             "secondName":secondName, 
             "email":email, 
-            "phoneNumber":phoneNumber
+            "phoneNumber":phoneNumber,
+            "role":role, //role added
+            "phone-verified": false
         });
 
         return res.json({

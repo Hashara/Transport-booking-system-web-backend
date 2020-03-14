@@ -10,7 +10,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 exports.signup = (req, res) =>{
 
 
-    const {  firstName, secondName, email, password, phoneNumber } = req.body
+    const {  firstName, secondName, email, password, phoneNumber,role } = req.body //role added
 
    //check the email is existing
     userModel.findEmail(res,email);
@@ -18,7 +18,7 @@ exports.signup = (req, res) =>{
 
    
      //create token for input data
-    const token = jwt.sign({firstName, secondName, email, password, phoneNumber},process.env.JWT_ACCOUNT_ACTIVATION,{expiresIn:'10m'})
+    const token = jwt.sign({firstName, secondName, email, password, phoneNumber,role },process.env.JWT_ACCOUNT_ACTIVATION,{expiresIn:'10m'})//role added
             
     //send activation code for the email
             
@@ -63,10 +63,10 @@ exports.activation = (req,res) =>{
             }
 
             
-            const {firstName, secondName, email, password, phoneNumber} = jwt.decode(token);
+            const {firstName, secondName, email, password, phoneNumber, role } = jwt.decode(token); //role added
 
-            userModel.registerUser(firstName, secondName, email, password, phoneNumber,res)
-
+            userModel.registerUser(firstName, secondName, email, password, phoneNumber, role, res) //role added
+ 
 
         })
     }
