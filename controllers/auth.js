@@ -74,10 +74,12 @@ exports.activation = (req,res) =>{
 }
 
 exports.signin = (req, res) =>{
-    const {email,phoneNumber, password} = req.body
+    const {email, password} = req.body
 
     //todo: check sign in by email or phone
     //if email
+   
+    
     userModel.signInbyEmail(email,password,res);
     //if phone 
     //todo: signin by phone number

@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+
 const admin = require('../firebase-admin/admin')
 const firebaseClient = require('../firebase-admin/firebase')
 
@@ -36,6 +38,7 @@ exports.findMobile = (res,phoneNumber) => {
     });
 }
 
+
 exports.registerUser = async(firstName, secondName, email, password, phoneNumber, role, res) => {
 
     //add user for firebase auth
@@ -72,10 +75,7 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
             "phone-verified": false
         });
 
-        //todo:role based database
-        //todo:wtite if {} for role base 
-        //admin,owner,passenger,conductor
-        //create owner,pessenger,conductor 
+        
         return res.json({
             message: "Activation success"
         })
@@ -90,15 +90,30 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
 
 
 exports.signInbyEmail = (email,password,res)=>{
-
+    
     firebaseClient.auth().signInWithEmailAndPassword(email,password)
     .then((user) =>{
-        
-        console.log(user)
-        return res.json({
-            message:"Sign in success",
-            user
+        //get uid for 
+        admin.auth().getUserByEmail(email)
+        .then(function(userRecord) {
+            
+            // get the uid of the newly created user for generate a token
+            const uid = userRecord.uid
+            console.log(uid)
+            const token = jwt.sign({_id:uid},process.env.JWT_SECRET,{expiresIn:'7d'})
+            // console.log(getRole(uid))
+            return res.json({
+                message:"Sign in success",
+                token,
+                user
+            })
+        }).catch((error)=>{
+            res.status(400)
+            return res.json({
+                error:error.message
+            })
         })
+        
     })
     .catch((error)=>{
         res.status(400)
@@ -106,6 +121,9 @@ exports.signInbyEmail = (email,password,res)=>{
             error:error.message
         })
     })
+
 }
 
-//todo:signInwithPhone
+
+
+
