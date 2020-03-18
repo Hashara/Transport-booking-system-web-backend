@@ -99,14 +99,58 @@ exports.signInbyEmail = (email,password,res)=>{
             
             // get the uid of the newly created user for generate a token
             const uid = userRecord.uid
-            console.log(uid)
+            // console.log(uid)
             const token = jwt.sign({_id:uid},process.env.JWT_SECRET,{expiresIn:'7d'})
             // console.log(getRole(uid))
-            return res.json({
-                message:"Sign in success",
-                token,
-                user
-            })
+            // const role = getRole(uid);
+            // getRole(uid);
+            // console.log(role)
+
+
+            //get role
+             let userRef = UsersRef.doc(uid);
+            //  var role;
+            userRef.get()
+                .then(doc => {
+                if (!doc.exists) {
+                    console.log('No such document!');
+                    // role= "PASSENGER"
+                    // return role
+                    return res.json({
+                        message:"Sign in success",
+                        token,
+                        user:{
+                            user,
+                            role:"PASSENGER",
+                        }
+                    })
+                } else {
+                    // console.log(doc.data().role);
+                    var role = doc.data().role
+                    console.log(role+"Method")
+                    // return role
+                    return res.json({
+                        message:"Sign in success",
+                        token,
+                        user:{
+                            user,
+                            role
+                        }
+                    })
+                }
+                
+                })
+                .catch(err => {
+                    console.log('Error getting document', err);
+                    // return null;
+                    // var role=null;
+                    res.status(400)
+                    return res.json({
+                        error:"Error with getting role"
+                    })
+                });
+
+           
         }).catch((error)=>{
             res.status(400)
             return res.json({
@@ -123,7 +167,4 @@ exports.signInbyEmail = (email,password,res)=>{
     })
 
 }
-
-
-
 

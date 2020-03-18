@@ -18,7 +18,8 @@ exports.userSignupValidator = [
     check('phoneNumber')
         .not()
         .isEmpty()
-        .withMessage('phone number is required')
+        .isMobilePhone()
+        .withMessage('Must be a valid phone number')
 ];
 
 //todo:sign in authentication
