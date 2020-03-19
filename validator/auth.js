@@ -18,7 +18,6 @@ exports.userSignupValidator = [
     check('phoneNumber')
         .not()
         .isEmpty()
-        .isMobilePhone()
         .withMessage('Must be a valid phone number')
 ];
 

@@ -150,7 +150,6 @@ exports.signInbyEmail = (email,password,res)=>{
                     })
                 });
 
-           
         }).catch((error)=>{
             res.status(400)
             return res.json({

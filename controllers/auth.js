@@ -2,9 +2,10 @@ const jwt = require('jsonwebtoken')
 
 const userModel = require('../models/user')
 
-const sgMail =require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// const sgMail =require('@sendgrid/mail')
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+const email_Api = require('../APIs/email-api/sendgrid')
 
 
 exports.signup = (req, res) =>{
@@ -31,19 +32,21 @@ exports.signup = (req, res) =>{
             <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
             <hr />`
     }
+
+    email_Api.sendEmail(emailData,email,res)
             
-    sgMail.send(emailData)
-    .then(sent =>{
-        // console.log('SIGNup EMAIL SENT')-
-        return res.json({
-            message: `Email has been sent to ${email}`
-        })
-    })
-    .catch(err =>{
-        return res.json({
-            message: err.message
-        })
-})
+    // sgMail.send(emailData)
+    // .then(sent =>{
+    //     // console.log('SIGNup EMAIL SENT')-
+    //     return res.json({
+    //         message: `Email has been sent to ${email}`
+    //     })
+    // })
+    // .catch(err =>{
+    //     return res.json({
+    //         message: err.message
+    //     })
+    // })
          
 
 }
