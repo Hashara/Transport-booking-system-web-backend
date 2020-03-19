@@ -72,7 +72,7 @@ exports.registerUser = async(firstName, secondName, email, password, phoneNumber
             "email":email, 
             "phoneNumber":phoneNumber,
             "role":role, //role added
-            "phone-verified": false
+            "phone_verified": false
         });
 
         
@@ -116,17 +116,14 @@ exports.signInbyEmail = (email,password,res)=>{
                     console.log('No such document!');
                     // role= "PASSENGER"
                     // return role
+                    res.status(400)
                     return res.json({
-                        message:"Sign in success",
-                        token,
-                        user:{
-                            user,
-                            role:"PASSENGER",
-                        }
+                        error:"Error data not found"
                     })
                 } else {
                     // console.log(doc.data().role);
                     var role = doc.data().role
+                    var phone_verified = doc.data().phone_verified
                     console.log(role+"Method")
                     // return role
                     return res.json({
@@ -134,7 +131,9 @@ exports.signInbyEmail = (email,password,res)=>{
                         token,
                         user:{
                             user,
-                            role
+                            role,
+                            phone_verified,
+                            
                         }
                     })
                 }
@@ -146,7 +145,7 @@ exports.signInbyEmail = (email,password,res)=>{
                     // var role=null;
                     res.status(400)
                     return res.json({
-                        error:"Error with getting role"
+                        error:"Error with getting data"
                     })
                 });
 
