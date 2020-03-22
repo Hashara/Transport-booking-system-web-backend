@@ -8,7 +8,7 @@ exports.userSignupValidator = [
     check('secondName')
         .not()
         .isEmpty()
-        .withMessage('First name is required'),
+        .withMessage('Second name is required'),
     check('email')
         .isEmail()
         .withMessage('Must be a valid email address'),
