@@ -9,3 +9,13 @@ exports.sendRequest = (req,res) =>{
     
     
 }
+
+
+exports.getPendingOwners = (req,res) =>{
+
+    // res.json({
+    //     hi:"hi"
+    // })
+    newOwnerModel.findPending(req,res);
+    
+}
