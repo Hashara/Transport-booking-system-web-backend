@@ -9,7 +9,8 @@ const bodyParser = require('body-parser')
 
 //import routes
 const authRoutes = require('./routes/auth')
-const userRoutes = require('./routes/user')
+const newOwnerRoutes = require('./routes/newOwner')
+// const userRoutes = require('./routes/user')
 
 // const functions = require('firebase-functions');
 
@@ -25,7 +26,7 @@ if(process.env.NODE_ENV = 'development'){
 
 // route middleware
 app.use('/api',authRoutes)
-app.use('/api',userRoutes)
+app.use('/api',newOwnerRoutes)
 
 const port = process.env.PORT || 8000;
 
