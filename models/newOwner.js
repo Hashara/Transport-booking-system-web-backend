@@ -5,11 +5,15 @@ const newOwnerRef = db.collection('newOwner');
 exports.saveData = (req,res)=>{
     const{ name, phoneNumber, address} = req.body
 
+    var date = new Date();    
+
     newOwnerRef.doc().set({
         name,
         phoneNumber,
         address,
-        status:"PENDING"
+        status:"PENDING",
+        date
+
     })
 
     return res.status(200).json({
