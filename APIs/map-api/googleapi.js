@@ -44,7 +44,8 @@ exports.getDirections = ( req,res ) =>{
 
                 var jsonData = {
                   "name":step.transit_details.line.name,
-                  "short_name":step.transit_details.line.short_name
+                  "short_name":step.transit_details.line.short_name,
+                  "status": "AVAILABLE" //todo: get the status from the db
                 };
                 
                 route.push(jsonData);
