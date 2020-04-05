@@ -24,7 +24,7 @@ exports.getDirections = ( req,res ) =>{
         
         routes.forEach((route) => {
 
-          console.log(i)
+          // console.log(i)
           i++;
           var legs = route.legs;
 
@@ -53,18 +53,25 @@ exports.getDirections = ( req,res ) =>{
               }
              
             })
-
             routeJson.steps.push(route)
           })
 
          
         });
         if (!err) { 
+          // console.log(i)
+          if (i===0){
+            res.status(404)
+            return res.json({
+              message: `Sorry no buses found from ${origin} to ${destination}`
+            })
 
+          }
           return res.json({
-          routes:routeJson
-        })
+            routes:routeJson
+          })
         }else{
+          res.status(400)
           return res.json({
             message:"Error occured",
             error:err
