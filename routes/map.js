@@ -4,7 +4,12 @@ const router = express.Router()
 //import controller
 const { getRoutes } = require('../controllers/map');
 
-router.post('/getroute',getRoutes);
+//import validator
+const {checkInputs} = require('../validator/map')
+const {runValidation} = require('../validator/index')
+
+
+router.post('/getroute',checkInputs,runValidation,getRoutes);
 
 module.exports = router;
 
