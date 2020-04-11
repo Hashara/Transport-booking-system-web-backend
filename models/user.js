@@ -166,3 +166,32 @@ exports.signInbyEmail = (email,password,res)=>{
 
 }
 
+exports.addUserdetails = (uid,firstName, secondName, email, phoneNumber, role,phone_verified) =>{
+    UsersRef.doc(uid).set({
+        "firstName":firstName, 
+        "secondName":secondName, 
+        "email":email, 
+        "phoneNumber":phoneNumber,
+        "role":role, //role added
+        "phone_verified": phone_verified
+    });
+
+}
+
+exports.registerOwner =  (firstName, secondName, email, password, phoneNumber) =>{
+    return admin.auth().createUser({
+        email,
+        password,
+        phoneNumber,
+        displayName:firstName+" "+secondName
+    })
+}
+
+exports.getUserbyEmail = (email) =>{
+    return admin.auth().getUserByEmail(email)  
+}
+
+
+exports.deleteUserByUID = (uid)=>{
+    return admin.auth().deleteUser(uid)
+}
