@@ -195,3 +195,7 @@ exports.getUserbyEmail = (email) =>{
 exports.deleteUserByUID = (uid)=>{
     return admin.auth().deleteUser(uid)
 }
+
+exports.getUserData = (uid) =>{
+     return UsersRef.doc(uid).get()
+}

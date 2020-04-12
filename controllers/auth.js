@@ -2,10 +2,9 @@ const jwt = require('jsonwebtoken')
 
 const userModel = require('../models/user')
 
-// const sgMail =require('@sendgrid/mail')
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
 const email_Api = require('../APIs/email-api/sendgrid')
+const expressJwt = require('express-jwt')
+// const SMS_Api = require('../APIs/sms-api/twilio')
 
 
 exports.signup = (req, res) =>{
@@ -88,3 +87,37 @@ exports.signin = (req, res) =>{
     //todo: signin by phone number
    
 }
+
+exports.requireSignin = expressJwt({
+    secret:process.env.JWT_SECRET
+})
+
+exports.adminMiddleware = (req,res,next) => {
+    
+    const uid = req.params.uid
+    console.log(uid)
+    const getData = userModel.getUserData(uid)
+
+    getData.then(doc => {
+        if (!doc.exists) {
+            console.log('No such document!');
+            // role= "PASSENGER"
+            // return role
+            res.status(400)
+            return res.json({
+                error:"Invallida user"
+            })
+        } else {
+            // console.log(doc.data().role);
+            var role = doc.data().role
+            // console.log(role)
+            if (role !== 'ADMIN'){
+                res.status(400)
+                res.json({
+                    error:"Admin resource. Access denied"
+                })
+            }
+        }
+    })
+    next()
+} 
