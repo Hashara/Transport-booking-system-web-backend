@@ -25,7 +25,7 @@ exports.acceptOwner =  (req,res) =>{
     const { uid,firstName, secondName, email, phoneNumber,phone_verified,address,nic } = req.body
 
     const password = helpers.generatePassword()
-    console.log(password)
+    console.log(password) // todo : uncomment this
     const authOwner = userModel.registerOwner(firstName, secondName, email, password, phoneNumber) 
 
     authOwner.then(response=>{
@@ -104,4 +104,24 @@ exports.acceptOwner =  (req,res) =>{
 
 
     
+}
+
+exports.rejectOwner = (req,res) => {
+
+    const { uid } = req.body
+
+    const reject = newOwnerModel.updateStatus(uid,"REJECTED")
+
+    reject.then(response =>{
+        res.status(200)
+        return res.json({
+            message: "reject successfully"
+        })
+    })
+    .catch(err=>{
+        res.status(400)
+        return res.json({
+            error:"Some error occured"
+        })
+    })
 }
