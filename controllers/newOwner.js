@@ -7,8 +7,22 @@ const sms_api = require('../APIs/sms-api/twilio')
 
 exports.sendRequest = (req,res) =>{
 
+    const{ name, phoneNumber, address} = req.body
 
-    newOwnerModel.saveData(req,res)
+    var date = new Date(); 
+    
+    const saveData = newOwnerModel.saveData(name,phoneNumber,address,date)
+    saveData.then(()=>{
+        return res.status(200).json({
+            message: 'Request send successfully'
+        })
+    })
+    .catch(()=>{
+        return res.status(400).json({
+            message: 'Something went wrong'
+        })
+    })
+    
     
     
 }
@@ -16,7 +30,32 @@ exports.sendRequest = (req,res) =>{
 
 exports.getPendingOwners = (req,res) =>{
 
-    newOwnerModel.findPending(req,res);
+    // newOwnerModel.findPending(req,res);
+
+    const query = newOwnerModel.findPending()
+
+    query.onSnapshot(querySnapshot => {
+        var newOwners =querySnapshot.docs.map(doc => Object.assign(doc.data(), {id: doc.id}))
+        console.log(newOwners)
+        console.log(`Received query snapshot of size ${querySnapshot.size}`);
+        
+        if (querySnapshot.size==0){
+            return res.status(200).json({
+                message:"No new requests"
+           })
+        }else{
+            return res.status(200).json({
+                
+                newOwners,
+            })
+        }
+    // ...
+    }, err => {
+        console.log(`Encountered error: ${err}`);
+        return res.status(400).json({
+            message:"Something went wrong"
+        })
+    });
     
 }
 
