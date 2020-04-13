@@ -10,5 +10,6 @@ const {runValidation} = require('../validator/index')
 router.post('/signup', userSignupValidator, runValidation,signup);
 router.post('/activate',activation);
 router.post('/signin',signin);
+// router.post('/mobile-verification',mobileVerification)
 
 module.exports = router;
