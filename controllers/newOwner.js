@@ -30,32 +30,30 @@ exports.sendRequest = (req,res) =>{
 
 exports.getPendingOwners = (req,res) =>{
 
-    // newOwnerModel.findPending(req,res);
-
     const query = newOwnerModel.findPending()
 
-    query.onSnapshot(querySnapshot => {
-        var newOwners =querySnapshot.docs.map(doc => Object.assign(doc.data(), {id: doc.id}))
-        console.log(newOwners)
-        console.log(`Received query snapshot of size ${querySnapshot.size}`);
-        
-        if (querySnapshot.size==0){
-            return res.status(200).json({
+    query
+    .then(snapshot => {
+        if (snapshot.empty) {
+          console.log('No matching documents.');
+          return res.status(200).json({
                 message:"No new requests"
-           })
-        }else{
-            return res.status(200).json({
-                
-                newOwners,
             })
-        }
-    // ...
-    }, err => {
-        console.log(`Encountered error: ${err}`);
+        }  
+        var newOwners = snapshot.docs.map(doc => Object.assign(doc.data(), {id: doc.id}))
+        
+        return res.status(200).json({
+    
+            newOwners,
+        })
+    
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
         return res.status(400).json({
             message:"Something went wrong"
         })
-    });
+      });
     
 }
 

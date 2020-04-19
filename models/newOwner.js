@@ -19,7 +19,7 @@ exports.saveData = (name, phoneNumber, address,date)=>{
 
 exports.findPending = () =>{
 
-    return newOwnerRef.where('status', '==', 'PENDING');
+    return newOwnerRef.where('status', '==', 'PENDING').get();
 
 }
 
