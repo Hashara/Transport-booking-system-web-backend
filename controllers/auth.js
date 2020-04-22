@@ -233,3 +233,33 @@ exports.adminMiddleware = (req,res,next) => {
     })
     next()
 } 
+
+exports.ownerMiddleware = (req,res,next) => {
+    
+    const uid = req.params.uid
+    // console.log(uid)
+    const getData = userModel.getUserData(uid)
+
+    getData.then(doc => {
+        if (!doc.exists) {
+            console.log('No such document!');
+            // role= "PASSENGER"
+            // return role
+            res.status(400)
+            return res.json({
+                error:"Invallida user"
+            })
+        } else {
+            // console.log(doc.data().role);
+            var role = doc.data().role
+            // console.log(role)
+            if (role !== 'OWNER'){
+                res.status(400)
+                res.json({
+                    error:"Owner resource. Access denied"
+                })
+            }
+        }
+    })
+    next()
+} 

@@ -11,6 +11,7 @@ const bodyParser = require('body-parser')
 const authRoutes = require('./routes/auth')
 const newOwnerRoutes = require('./routes/newOwner')
 const mapRoutes = require('./routes/map')
+const ConductorRoutes = require('./routes/conductor')
 // const userRoutes = require('./routes/user')
 
 // const functions = require('firebase-functions');
@@ -29,11 +30,12 @@ if(process.env.NODE_ENV = 'development'){
 app.use('/api',authRoutes)
 app.use('/api',newOwnerRoutes)
 app.use('/api',mapRoutes)
+app.use('/api',ConductorRoutes)
+
 
 
 const port = process.env.PORT || 8000;
 
 app.listen(port,() =>{
     console.log(`listening  to ${port}`)
-})
-;
+});
