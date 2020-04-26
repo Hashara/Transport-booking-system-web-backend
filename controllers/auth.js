@@ -225,7 +225,7 @@ exports.adminMiddleware = (req,res,next) => {
             // console.log(role)
             if (role !== 'ADMIN'){
                 res.status(400)
-                res.json({
+                return res.json({
                     error:"Admin resource. Access denied"
                 })
             }
@@ -243,11 +243,10 @@ exports.ownerMiddleware = (req,res,next) => {
     getData.then(doc => {
         if (!doc.exists) {
             console.log('No such document!');
-            // role= "PASSENGER"
-            // return role
+            
             res.status(400)
             return res.json({
-                error:"Invallida user"
+                error:"Invalid user"
             })
         } else {
             // console.log(doc.data().role);
@@ -255,7 +254,7 @@ exports.ownerMiddleware = (req,res,next) => {
             // console.log(role)
             if (role !== 'OWNER'){
                 res.status(400)
-                res.json({
+                return res.json({
                     error:"Owner resource. Access denied"
                 })
             }
