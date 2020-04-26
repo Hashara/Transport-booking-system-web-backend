@@ -1,7 +1,6 @@
 const express = require('express')
 require('dotenv').config();
 const app = express()
-// const admin = require('./firebase-admin/admin')
 
 const morgan = require('morgan')
 const cors = require('cors')
@@ -12,13 +11,12 @@ const authRoutes = require('./routes/auth')
 const newOwnerRoutes = require('./routes/newOwner')
 const mapRoutes = require('./routes/map')
 const ConductorRoutes = require('./routes/conductor')
-// const userRoutes = require('./routes/user')
+const busTypeRoute = require('./routes/busType')
+const newBusRoute = require('./routes/newBus')
 
-// const functions = require('firebase-functions');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-// app.use(cors());//allows all origins
 
 if(process.env.NODE_ENV = 'development'){
     app.use(cors({
@@ -31,7 +29,8 @@ app.use('/api',authRoutes)
 app.use('/api',newOwnerRoutes)
 app.use('/api',mapRoutes)
 app.use('/api',ConductorRoutes)
-
+app.use('/api',busTypeRoute)
+app.use('/api',newBusRoute)
 
 
 const port = process.env.PORT || 8000;
