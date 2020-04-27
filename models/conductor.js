@@ -6,7 +6,6 @@ const conductorRef = db.collection('conductor');
 
 exports.createConductor = (ownerUid,uid,firstName, secondName, email, phoneNumber,address,nic) => {
     
-    console.log("hi")
     let batch = db.batch();
 
     let userDoc = userRef.doc(uid);
@@ -29,9 +28,7 @@ exports.createConductor = (ownerUid,uid,firstName, secondName, email, phoneNumbe
     });
 
     // Commit the batch
-    return batch.commit().then(function () {
-        
-    });
+    return batch.commit();
 
     
 }

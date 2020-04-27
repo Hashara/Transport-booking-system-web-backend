@@ -13,6 +13,8 @@ const mapRoutes = require('./routes/map')
 const ConductorRoutes = require('./routes/conductor')
 const busTypeRoute = require('./routes/busType')
 const newBusRoute = require('./routes/newBus')
+const BusRoute = require('./routes/bus')
+
 
 
 app.use(morgan('dev'));
@@ -31,6 +33,8 @@ app.use('/api',mapRoutes)
 app.use('/api',ConductorRoutes)
 app.use('/api',busTypeRoute)
 app.use('/api',newBusRoute)
+app.use('/api',BusRoute)
+
 
 
 const port = process.env.PORT || 8000;

@@ -31,3 +31,7 @@ exports.createBus = (reqId,routeId,adminUid,ownerId,busNo,type,windowSeatPrice,J
     return batch.commit();
 
 }
+
+exports.getAllbusesOfOwner = (ownerId) =>{
+    return busRef.where('ownerId','==',ownerId).get();
+}
