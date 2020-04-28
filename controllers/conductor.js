@@ -88,3 +88,84 @@ exports.addConductor = (req,res) =>{
         
 
 }
+
+exports.ownerGetConductors = (req,res) =>{
+    const ownerUid = req.params.uid;
+
+    const getConductors = ConductorModel.getConductors(ownerUid);
+
+   
+
+    getConductors
+    .then(async function(querySnapshot){
+        const jsonArray = {
+            conductors:[]
+        }
+        
+        if (querySnapshot.size === 0) {
+            return res.status(200).json({
+                message:"No conductors registered"
+            })
+        }
+        await new Promise( (resolve) => {
+            var i = 0
+            querySnapshot.forEach(function(doc) {
+
+                const userdata = userModel.getUserData(doc.id)
+                
+                const NIC = doc.data().NIC
+                const address = doc.data().address
+                
+                userdata
+                .then(doc => {
+                    if (!doc.exists) {
+                        console.log('No such document!');
+                        res.status(400)
+                        return res.json({
+                            error:"Error data not found"
+                        })
+                    } else {
+                        const firstName = doc.data().firstName
+                        const secondName = doc.data().secondName
+                        const email = doc.data().email
+                        const phoneNumber = doc.data().phoneNumber
+    
+                        var jsonData = {
+                            "id": doc.id,
+                            "name": firstName + " " + secondName,
+                            "email": email,
+                            "phoneNumber": phoneNumber,
+                            "NIC": NIC,
+                            "address": address
+                        }
+                        i+=1
+
+                        //push json data in to array
+                        jsonArray.conductors.push(jsonData);
+                    
+                       
+                        if (i === querySnapshot.size) {
+                            return res.status(200).json(
+                                jsonArray
+                            )
+                        }
+                    }
+                })
+                .catch(()=>{
+                    return res.status(400).json({
+                        error:"Something went wrong"
+                    })
+                })
+                
+            });
+        })    
+        
+    })
+   
+    .catch(()=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+
+}

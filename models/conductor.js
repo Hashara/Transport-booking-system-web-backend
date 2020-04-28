@@ -32,3 +32,7 @@ exports.createConductor = (ownerUid,uid,firstName, secondName, email, phoneNumbe
 
     
 }
+
+exports.getConductors = (ownerUid) => {
+    return conductorRef.where('owner_id','==',ownerUid).get();
+}
