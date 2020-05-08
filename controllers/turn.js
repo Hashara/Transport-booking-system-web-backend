@@ -264,4 +264,9 @@ exports.getActiveTurnsByConductor = (req,res) => {
         })
         // console.log(snapshot) 
     })
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
 }
