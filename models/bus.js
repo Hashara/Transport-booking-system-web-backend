@@ -35,3 +35,7 @@ exports.createBus = (reqId,routeId,adminUid,ownerId,busNo,type,windowSeatPrice,J
 exports.getAllbusesOfOwner = (ownerId) =>{
     return busRef.where('ownerId','==',ownerId).get();
 }
+
+exports.getBusFromBusId = (busId) =>{
+    return busRef.doc(busId).get();
+}

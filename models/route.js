@@ -15,3 +15,7 @@ exports.addNewRoute = (routeNo, destination, origin,duration,routeId) => {
         duration
     })
 }
+
+exports.getRoute = (routeId) => {
+    return routeRef.doc(routeId).get()
+}

@@ -14,7 +14,7 @@ const ConductorRoutes = require('./routes/conductor')
 const busTypeRoute = require('./routes/busType')
 const newBusRoute = require('./routes/newBus')
 const BusRoute = require('./routes/bus')
-
+const TurnRoute = require('./routes/turn')
 
 
 app.use(morgan('dev'));
@@ -34,6 +34,7 @@ app.use('/api',ConductorRoutes)
 app.use('/api',busTypeRoute)
 app.use('/api',newBusRoute)
 app.use('/api',BusRoute)
+app.use('/api',TurnRoute)
 
 
 
