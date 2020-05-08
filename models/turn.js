@@ -3,7 +3,7 @@ const admin = require('../firebase-admin/admin');
 const db = admin.firestore();
 const turnRef = db.collection('turn');
 
-exports.addTurn = (busId,ConductorId,departureTime,startStation,ownerUid,routeId,numberOfSeats,windowSeatsArray,jumpingSeatsArray,NormalSeatPrice, windowSeatPrice, JumpingSeatPrice, duration) => {
+exports.addTurn = (busId,ConductorId,departureTime,startStation,ownerUid,routeId,numberOfSeats,windowSeatsArray,jumpingSeatsArray,NormalSeatPrice, windowSeatPrice, JumpingSeatPrice, duration,TypeName) => {
 
     var date = new Date(); 
     var departureTimeStanded = new Date(departureTime)
@@ -22,7 +22,8 @@ exports.addTurn = (busId,ConductorId,departureTime,startStation,ownerUid,routeId
         ownerUid,
         routeId,
         NormalSeatPrice,
-        duration
+        duration,
+        TypeName
     })
 
     console.log(jumpingSeatsArray)
@@ -54,4 +55,9 @@ exports.addTurn = (busId,ConductorId,departureTime,startStation,ownerUid,routeId
 
     //for loop ekakin collection eka athule ewa hadanna
     return batch.commit();
+}
+
+
+exports.getTurnsByRouteID = (routeId) => {
+    return turnRef.where('routeId', '==', routeId).get();
 }

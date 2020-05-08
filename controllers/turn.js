@@ -88,13 +88,14 @@ exports.addTurn =  async (req,res) => {
                     const numberOfSeats = doc.data().seats
                     const windowSeatsArray = doc.data().windowSeats
                     const jumpingSeatsArray = doc.data().jumpingSeats
+                    const TypeName = doc.data().name
                     
                     getDuration
                     .then(documnet => {
                         console.log(documnet.data().duration)
                         const duration = documnet.data().duration
                         const addTurn = turnModel.addTurn(busId,ConductorId,departureTime,startStation,ownerUid,routeId,numberOfSeats,
-                            windowSeatsArray,jumpingSeatsArray,NormalSeatPrice, windowSeatPrice, JumpingSeatPrice, duration)
+                            windowSeatsArray,jumpingSeatsArray,NormalSeatPrice, windowSeatPrice, JumpingSeatPrice, duration,TypeName)
                         addTurn
                         .then(() => {
                             return res.status(200).json({
@@ -127,3 +128,80 @@ exports.addTurn =  async (req,res) => {
         
 }
 
+exports.getTurnByRouteID = (req,res) => {
+    
+    const {routeId} = req.body
+
+    const today = new Date()
+
+    const getTurns = turnModel.getTurnsByRouteID(routeId)
+
+    getTurns
+    .then(snapshot=>{
+        // console.log(doc.data())
+        if(snapshot.empty){
+            return res.status(200).json({
+                message:"No turns found"
+            })
+        }
+
+        const jsonArray = {
+            turns:[]
+        }
+        var i = 0
+        snapshot.forEach(doc=>{
+
+            // console.log(helpers.hourDiff(doc.data().departureTime.toDate()))
+            
+            // if (helpers.hourDiff())
+            const departureTime = doc.data().departureTime.toDate()
+
+            if (helpers.hourDiff(departureTime)>1){
+                const NormalSeatPrice = doc.data().NormalSeatPrice
+                const startStation = doc.data().startStation
+                const turnId = doc.id
+                const duration = doc.data().duration
+                const arrivalTime = helpers.addMillis(departureTime,duration)
+                const endStation = helpers.getOtherStation(startStation,routeId)
+                const busType = doc.data().TypeName
+
+                // console.log(departureTime)
+                // console.log(arrivalTime)
+                // console.log(NormalSeatPrice)
+                // console.log(startStation)
+                // console.log(turnId)
+                // console.log(duration/ (1000*60*60))
+                // console.log(endStation)
+                // console.log(busType)
+                
+                var jsonData = {
+                turnId,
+                departureTime,
+                startStation,
+                arrivalTime,
+                endStation,
+                NormalSeatPrice,
+                busType
+                }
+                
+
+                //push json data in to array
+                jsonArray.turns.push(jsonData);
+            }
+            
+            i+=1
+            if (i === snapshot.size){
+                return res.status(200).json({
+                    turns:jsonArray.turns
+                })
+            }
+        })
+
+    })
+    .catch(err=>{
+        console.log(err)
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+}
