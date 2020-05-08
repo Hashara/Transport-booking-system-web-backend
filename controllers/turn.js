@@ -205,3 +205,63 @@ exports.getTurnByRouteID = (req,res) => {
         })
     })
 }
+
+
+exports.getActiveTurnsByConductor = (req,res) => {
+    const conductorUid = req.params.uid;
+
+    const turns = turnModel.getActiveTurnsOfConductor(conductorUid)
+    turns
+    .then(snapshot =>{
+        var i = 0
+        var jsonArray = {
+            turns:[]
+        }
+        snapshot.forEach(doc=>{
+            // console.log(doc.data())
+            const departureTime = doc.data().departureTime.toDate()
+            const duration = doc.data().duration
+            // console.log(departureTime)
+            const arrivalTime = helpers.addMillis(departureTime,duration)
+            // console.log(arrivalTime)
+            // console.log(new Date())
+            
+            if(arrivalTime >= new Date()){
+                // console.log(doc.data())
+                
+                const NormalSeatPrice = doc.data().NormalSeatPrice
+                const startStation = doc.data().startStation
+                const turnId = doc.id
+                // const duration = doc.data().duration
+                const endStation = helpers.getOtherStation(startStation,doc.data().routeId)
+                const busType = doc.data().TypeName
+                const addedDate = doc.data().addedDate
+
+                var jsonData = {
+                    turnId,
+                    departureTime,
+                    startStation,
+                    arrivalTime,
+                    endStation,
+                    NormalSeatPrice,
+                    busType,
+                    addedDate
+                }
+                    
+    
+                    //push json data in to array
+                jsonArray.turns.push(jsonData);
+                // console.log(jsonArray)
+            }
+
+            i+=1
+
+            if (i === snapshot.size){
+                return res.status(200).json({
+                    turns:jsonArray.turns
+                })
+            }
+        })
+        // console.log(snapshot) 
+    })
+}

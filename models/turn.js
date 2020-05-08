@@ -61,3 +61,10 @@ exports.addTurn = (busId,ConductorId,departureTime,startStation,ownerUid,routeId
 exports.getTurnsByRouteID = (routeId) => {
     return turnRef.where('routeId', '==', routeId).get();
 }
+
+exports.getActiveTurnsOfConductor = (conductorUid) => {
+
+    var currDate = new Date()
+
+    return turnRef.where('ConductorId','==',conductorUid).get()
+}
