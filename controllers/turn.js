@@ -131,9 +131,6 @@ exports.addTurn =  async (req,res) => {
 exports.getTurnByRouteID = (req,res) => {
     
     const {routeId} = req.body
-
-    const today = new Date()
-
     const getTurns = turnModel.getTurnsByRouteID(routeId)
 
     getTurns
@@ -206,7 +203,6 @@ exports.getTurnByRouteID = (req,res) => {
     })
 }
 
-
 exports.getActiveTurnsByConductor = (req,res) => {
     const conductorUid = req.params.uid;
 
@@ -236,31 +232,54 @@ exports.getActiveTurnsByConductor = (req,res) => {
                 const endStation = helpers.getOtherStation(startStation,doc.data().routeId)
                 const busType = doc.data().TypeName
                 const addedDate = doc.data().addedDate
+                // console.log(doc.data())
+                const getBusNumber = busModel.getBusFromBusId(doc.data().busId)
 
-                var jsonData = {
-                    turnId,
-                    departureTime,
-                    startStation,
-                    arrivalTime,
-                    endStation,
-                    NormalSeatPrice,
-                    busType,
-                    addedDate
-                }
-                    
-    
-                    //push json data in to array
-                jsonArray.turns.push(jsonData);
+                getBusNumber
+                .then(doc=>{
+                    // console.log(doc.data())
+                    const busNo = doc.data().busNo
+                    var jsonData = {
+                        turnId,
+                        busNo,
+                        departureTime,
+                        startStation,
+                        arrivalTime,
+                        endStation,
+                        NormalSeatPrice,
+                        busType,
+                        addedDate
+                    }
+                        
+        
+                        //push json data in to array
+                    jsonArray.turns.push(jsonData);
+
+                    i+=1
+
+                    if (i === snapshot.size){
+                        return res.status(200).json({
+                            turns:jsonArray.turns
+                        })
+                    }
+                })
+                .catch(err=>{
+                    return res.status(400).json({
+                        error:"Something went wrong"
+                    })
+                })
+               
                 // console.log(jsonArray)
             }
-
-            i+=1
-
-            if (i === snapshot.size){
-                return res.status(200).json({
-                    turns:jsonArray.turns
-                })
+            else{
+                i+=1
+                if (i === snapshot.size){
+                    return res.status(200).json({
+                        turns:jsonArray.turns
+                    })
+                }
             }
+            
         })
         // console.log(snapshot) 
     })
@@ -269,4 +288,99 @@ exports.getActiveTurnsByConductor = (req,res) => {
             error:"Something went wrong"
         })
     })
+}
+
+exports.getPastTurns = (req,res) => {
+    const conductorUid = req.params.uid;
+
+    const turns = turnModel.getActiveTurnsOfConductor(conductorUid)
+    turns
+    .then(snapshot =>{
+        var i = 0
+        var jsonArray = {
+            turns:[]
+        }
+        snapshot.forEach(doc=>{
+            // console.log(doc.data())
+            const departureTime = doc.data().departureTime.toDate()
+            const duration = doc.data().duration
+            // console.log(departureTime)
+            const arrivalTime = helpers.addMillis(departureTime,duration)
+            // console.log(arrivalTime)
+            // console.log(new Date())
+            
+            if(arrivalTime < new Date()){
+                // console.log(doc.data())
+                
+                const NormalSeatPrice = doc.data().NormalSeatPrice
+                const startStation = doc.data().startStation
+                const turnId = doc.id
+                // const duration = doc.data().duration
+                const endStation = helpers.getOtherStation(startStation,doc.data().routeId)
+                const busType = doc.data().TypeName
+                const addedDate = doc.data().addedDate
+                // console.log(doc.data())
+                const getBusNumber = busModel.getBusFromBusId(doc.data().busId)
+
+                getBusNumber
+                .then(doc=>{
+                    // console.log(doc.data())
+                    const busNo = doc.data().busNo
+                    var jsonData = {
+                        turnId,
+                        busNo,
+                        departureTime,
+                        startStation,
+                        arrivalTime,
+                        endStation,
+                        NormalSeatPrice,
+                        busType,
+                        addedDate
+                    }
+                        
+        
+                        //push json data in to array
+                    jsonArray.turns.push(jsonData);
+
+                    i+=1
+
+                    if (i === snapshot.size){
+                        return res.status(200).json({
+                            turns:jsonArray.turns
+                        })
+                    }
+                })
+                .catch(err=>{
+                    return res.status(400).json({
+                        error:"Something went wrong"
+                    })
+                })
+               
+                // console.log(jsonArray)
+            }
+            else{
+                i+=1
+                if (i === snapshot.size){
+                    return res.status(200).json({
+                        turns:jsonArray.turns
+                    })
+                }
+            }
+            
+        })
+        // console.log(snapshot) 
+    })
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+}
+
+exports.getSeatsDetailsOfTurn = (req,res) => {
+
+    const turnId = req.body
+
+    const turnDetails = turnModel.getAllSeats(turnId)
+
 }
