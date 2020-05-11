@@ -377,10 +377,62 @@ exports.getPastTurns = (req,res) => {
     })
 }
 
-exports.getSeatsDetailsOfTurn = (req,res) => {
+exports.getSeatsDetailsOfTurnByPassenger = (req,res) => {
 
-    const turnId = req.body
+    const { turnId } = req.body
 
-    const turnDetails = turnModel.getAllSeats(turnId)
+    //check date
+    const getTurnData = turnModel.getTurnByTurnID(turnId)
+
+    getTurnData
+    .then(doc=> {
+        console.log(doc.data())
+        // const departureTime = doc.data().departureTime.toDate()
+        const differenceInhours = helpers.hourDiff(doc.data().departureTime.toDate())
+        // console.log(getDifferenceInhours)
+        if (differenceInhours>1){
+            const seatsDetails = turnModel.getAllSeats(turnId)
+
+            seatsDetails
+            .then(snapshot=>{
+                if(snapshot.empty){
+                    res.status(400)
+                    return res.json({
+                        error:"Something went wrong"
+                    })
+                }
+                var seats = snapshot.docs.map(doc => Object.assign({
+                    id: doc.id,
+                    status : doc.data().status,
+                    seatType: doc.data().seatType,
+                    price: doc.data().price
+                }))
+                
+                return res.status(200).json({
+                    seats,
+                })
+            })
+            .catch(err=>{
+                res.status(400)
+                return res.json({
+                    error:"Something went wrong"
+                })
+            })
+        }
+
+        else{
+            return res.status(200).json({
+                message: "You ca not book this bus"
+            })
+        }
+    })
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+
+    // console.log(turnId)
+    
 
 }

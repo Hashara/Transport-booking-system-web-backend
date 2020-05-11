@@ -63,8 +63,17 @@ exports.getTurnsByRouteID = (routeId) => {
 }
 
 exports.getActiveTurnsOfConductor = (conductorUid) => {
-
-    var currDate = new Date()
-
     return turnRef.where('ConductorId','==',conductorUid).get()
+}
+
+exports.getTurnByTurnID = (turnId) =>{
+    return turnRef.doc(turnId).get()
+}
+
+exports.getAllSeats = (turnId) =>{
+    return turnRef.doc(turnId).collection('booking').get()
+}
+
+exports.getSeat = (seatId, turnId) =>{
+    //todo: return details
 }

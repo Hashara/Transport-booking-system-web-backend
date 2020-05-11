@@ -292,3 +292,34 @@ exports.ConductorMiddleware = (req,res,next) => {
     })
     next()
 } 
+
+
+exports.passengerMiddleware = (req,res,next) => {
+    
+    const uid = req.params.uid
+    // console.log(uid)
+    const getData = userModel.getUserData(uid)
+
+    getData.then(doc => {
+        if (!doc.exists) {
+            console.log('No such document!');
+            
+            res.status(400)
+            return res.json({
+                error:"Invalid user"
+            })
+        } else {
+            // console.log(doc.data().role);
+            var role = doc.data().role
+            // console.log(role)
+            if (role !== 'PASSENGER'){
+                res.status(400)
+                return res.json({
+                    error:"Conductor resource. Access denied"
+                })
+            }
+        }
+    })
+    next()
+
+}
