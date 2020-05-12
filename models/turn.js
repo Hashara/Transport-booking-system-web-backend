@@ -45,7 +45,7 @@ exports.addTurn = (busId,ConductorId,departureTime,startStation,ownerUid,routeId
         }
 
         batch.set(collectiontest,{
-            status:"Availble",
+            status:"Available",
             seatType,
             price
         });
@@ -75,5 +75,5 @@ exports.getAllSeats = (turnId) =>{
 }
 
 exports.getSeat = (seatId, turnId) =>{
-    //todo: return details
+    return  turnRef.doc(turnId).collection('booking').doc(seatId).get()
 }

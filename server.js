@@ -15,7 +15,7 @@ const busTypeRoute = require('./routes/busType')
 const newBusRoute = require('./routes/newBus')
 const BusRoute = require('./routes/bus')
 const TurnRoute = require('./routes/turn')
-
+const bookingRouter = require('./routes/booking')
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -35,7 +35,7 @@ app.use('/api',busTypeRoute)
 app.use('/api',newBusRoute)
 app.use('/api',BusRoute)
 app.use('/api',TurnRoute)
-
+app.use('/api',bookingRouter)
 
 
 const port = process.env.PORT || 8000;
