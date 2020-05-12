@@ -130,10 +130,64 @@ exports.bookSeats = (req,res) => {
 
 }
 
-// exports.cancelBooking = (req,res) => {
-//     const passengerUID = req.params.uid;
+exports.cancelBooking = (req,res) => {
+    const passengerUID = req.params.uid;
 
-//     const { bookingId } = req.body
+    const { bookingId } = req.body
 
+    const bookingIdSplited = bookingId.split(" ")
 
-// }
+    console.log(bookingIdSplited[0])
+    console.log(bookingIdSplited[1])
+    console.log(bookingIdSplited[2])
+    console.log(bookingIdSplited[3])
+    const turnId = bookingIdSplited[0]+" " +bookingIdSplited[1]
+    const passengerUID_fromBookingId = bookingIdSplited[2]
+    const seatId =bookingIdSplited[3]
+
+    const getHourDiff = helpers.hourDiff(new Date(bookingIdSplited[1]))
+    if(passengerUID !== passengerUID_fromBookingId){
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    }
+    else if(getHourDiff<24 ){
+        return res.status(400).json({
+            message:"Sorry you can not cancel booking now"
+        })
+    }
+    else{
+        // const getTurnFormBooking = bookingModel.getTurnFromBookingId(bookingId, turnId, seatId,passengerUID)
+
+         const getTurnFormBooking = bookingModel.getTurnFromBookingId(bookingId)
+
+        getTurnFormBooking
+        .then(doc=>{
+            // console.log(doc.data())
+            // console.log(doc.data().turnId === turnId)
+            const price = doc.data().price
+
+            const cancel = bookingModel.cancelBooking(bookingId, turnId, seatId,passengerUID, price)
+
+            cancel
+            .then(Response=>{
+                return res.status(200).json({
+                    message:"Cancelled successfully"
+                })
+            })
+            .catch(err=>{
+                return res.status(400).json({
+                    error:"Something went wrong"
+                })
+            })
+        })
+        .catch(err=>{
+            return res.status(400).json({
+                error:"Something went wrong"
+            })
+        })
+
+    }
+    // console.log(getHourDiff)
+   
+}

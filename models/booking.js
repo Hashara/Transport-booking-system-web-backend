@@ -5,6 +5,7 @@ const bookingRef = db.collection('booking')
 const turnRef = db.collection('turn')
 const passengerRef = db.collection('passenger')
 const turnModel = require('../models/turn')
+const cancelRef = db.collection('cancelledBooking')
 
 exports.addBooking = (seatIdArray, turnId, passengerUID,startStation, endStation, conductorPhone, routeId,
      bustype, departureTime, arrivalTime, busNo,priceArray,res) => {
@@ -81,4 +82,39 @@ exports.addBooking = (seatIdArray, turnId, passengerUID,startStation, endStation
 
 
 
+}
+
+exports.getTurnFromBookingId = (bookingId) =>{
+    return bookingRef.doc(bookingId).get()
+}
+
+exports.cancelBooking = (bookingId, turnId, seatId,passengerUID,price) =>{
+    let batch = db.batch()
+
+    var curDate = new Date()
+    let bookingDoc = bookingRef.doc(bookingId)
+    batch.delete(bookingDoc)
+
+    let turnBookingDoc = turnRef.doc(turnId).collection('booking').doc(seatId)
+    batch.update(turnBookingDoc,{
+        status:"Available",
+        booking:""
+    })
+
+    let passengerBookingDoc = passengerRef.doc(passengerUID).collection('booking').doc(bookingId)
+    batch.update(passengerBookingDoc,{
+        paymentState:"Canceled",
+        penalty: price/2,
+        cancelledDate: curDate
+    })
+
+    let cancelBookingDoc = cancelRef.doc(bookingId)
+    batch.set(cancelBookingDoc,{
+        passengerUID,
+        turnId,
+        curDate,
+        penalty: price/2,
+        cancelledDate: curDate
+    })
+    return batch.commit();
 }
