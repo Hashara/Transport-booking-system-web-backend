@@ -436,3 +436,52 @@ exports.getSeatsDetailsOfTurnByPassenger = (req,res) => {
     
 
 }
+
+exports.getSeatsDetailsOfTurnByPassengerConductor = (req,res) =>{
+  
+    const conductorUid = req.params.uid;
+
+    const {turnId} = req.body
+
+    const getTurnData = turnModel.getTurnByTurnID(turnId)
+
+    getTurnData
+    .then(doc=>{
+        console.log(doc.data().ConductorId === conductorUid)
+        // console.log(doc.data())
+        if (conductorUid !== doc.data().ConductorId){
+            return res.status(400).json({
+                error:"You don't have access"
+            })
+        }
+        else{
+            // console.log("else")
+            const getBooking = turnModel.getAllSeats(turnId)
+            getBooking
+            .then(snapshots =>{
+                var seats = snapshots.docs.map(doc => Object.assign({
+                    id: doc.id,
+                    status : doc.data().status,
+                    seatType: doc.data().seatType,
+                    price: doc.data().price,
+                    booking: doc.data().booking
+                }))
+
+                return res.status(200).json({
+                    seats
+                })
+            })
+        }
+    })
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+}
+
+// exports.getPassengerOfTheSeat = (req,res) =>{
+//     const conductorUid = req.params.uid;
+
+//     const 
+// }

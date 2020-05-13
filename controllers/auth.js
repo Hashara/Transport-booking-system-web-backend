@@ -228,10 +228,16 @@ exports.adminMiddleware = (req,res,next) => {
                 return res.json({
                     error:"Admin resource. Access denied"
                 })
+            }else{
+                next()
             }
         }
     })
-    next()
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
 } 
 
 exports.ownerMiddleware = (req,res,next) => {
@@ -257,10 +263,16 @@ exports.ownerMiddleware = (req,res,next) => {
                 return res.json({
                     error:"Owner resource. Access denied"
                 })
+            }else{
+                next()
             }
         }
     })
-    next()
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
 } 
 
 
@@ -288,9 +300,18 @@ exports.ConductorMiddleware = (req,res,next) => {
                     error:"Conductor resource. Access denied"
                 })
             }
+            else{
+                next()
+            }
         }
     })
-    next()
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+
+    // next()
 } 
 
 
@@ -317,9 +338,15 @@ exports.passengerMiddleware = (req,res,next) => {
                 return res.json({
                     error:"Conductor resource. Access denied"
                 })
+            }else{
+                next()
             }
         }
     })
-    next()
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
 
 }
