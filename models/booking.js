@@ -118,3 +118,7 @@ exports.cancelBooking = (bookingId, turnId, seatId,passengerUID,price) =>{
     })
     return batch.commit();
 }
+
+exports.getBookingDetails = (bookingId) =>{
+    return bookingRef.doc(bookingId).get();
+}

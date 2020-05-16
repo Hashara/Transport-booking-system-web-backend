@@ -77,3 +77,7 @@ exports.getAllSeats = (turnId) =>{
 exports.getSeat = (seatId, turnId) =>{
     return  turnRef.doc(turnId).collection('booking').doc(seatId).get()
 }
+
+exports.getBookingDeatailsBySeat = (turnId,seatId) =>{
+    return turnRef.doc(turnId).collection('booking').doc(seatId).get()
+}

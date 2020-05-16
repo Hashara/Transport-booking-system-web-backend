@@ -4,6 +4,8 @@ const conductorModel = require('../models/conductor')
 const helpers = require('./helpers')
 const busTypeModel = require('../models/busType')
 const routeModel = require('../models/route')
+const bookingModel = require('../models/booking')
+const userModel = require('../models/user')
 
 exports.addTurn =  async (req,res) => {
 
@@ -447,11 +449,16 @@ exports.getSeatsDetailsOfTurnByPassengerConductor = (req,res) =>{
 
     getTurnData
     .then(doc=>{
-        console.log(doc.data().ConductorId === conductorUid)
+        // console.log(doc.data())
         // console.log(doc.data())
         if (conductorUid !== doc.data().ConductorId){
             return res.status(400).json({
                 error:"You don't have access"
+            })
+        }
+        else if(helpers.addMillis(doc.data().departureTime.toDate(),doc.data().duration)> new Date()){
+            return res.status(400).json({
+                error:"You don't have access to past turns"
             })
         }
         else{
@@ -480,8 +487,90 @@ exports.getSeatsDetailsOfTurnByPassengerConductor = (req,res) =>{
     })
 }
 
-// exports.getPassengerOfTheSeat = (req,res) =>{
-//     const conductorUid = req.params.uid;
+exports.getPassengerOfTheSeatByConductor = (req,res) =>{
+    const conductorUid = req.params.uid;
 
-//     const 
-// }
+    const { turnId, seatId} =req.body
+
+    const getTurnData = turnModel.getTurnByTurnID(turnId)
+
+    getTurnData
+    .then(doc=>{
+        if (conductorUid !== doc.data().ConductorId){
+            return res.status(400).json({
+                error:"You don't have access"
+            })
+        }
+        else if(helpers.addMillis(doc.data().departureTime.toDate(),doc.data().duration)> new Date()){
+            return res.status(400).json({
+                error:"You don't have access to past turns"
+            })
+        }
+        else if(doc.data().departureTime.toDate()<helpers.addMillis(new Date(),-3600000)){
+            return res.status(400).json({
+                error:"You don't have access yet"
+            })
+        }
+        else{
+            const bookingId = turnModel.getBookingDeatailsBySeat(turnId, seatId)
+
+            bookingId
+            .then(doc=>{
+                // console.log(doc.data().booking === undefined)
+                if(doc.data().booking === undefined || doc.data().booking === ""){
+                    return res.status(200).json({
+                        message:"Not yet booked"
+                    })
+                }
+                else{
+                    
+                    const bookingDeatils = bookingModel.getBookingDetails(doc.data().booking)
+                    bookingDeatils
+                    .then(doc=>{
+                        const startStation = doc.data().startStation
+                        const endStation = doc.data().endStation
+
+                        const getPassengerDetails = userModel.getUserData(doc.data().passengerUID)
+
+                        getPassengerDetails
+                        .then(doc=>{
+                            // console.log(doc.data())
+                            const passengerName = doc.data().firstName + " " + doc.data().secondName
+                            const passengerPhone = doc.data().phoneNumber
+
+                            // console.log(startStation, endStation, passengerName, passengerPhone)
+                            return res.status(200).json({
+                                startStation,
+                                endStation, 
+                                passengerName, 
+                                passengerPhone
+                            })
+                        })
+                        .catch(err=>{
+                            return res.status(400).json({
+                                error:"Something went wrong"
+                            })
+                        })
+                    })
+                    .catch(err=>{
+                        return res.status(400).json({
+                            error:"Something went wrong"
+                        })
+                    })
+
+                }
+            })
+            .catch(err=>{
+                return res.status(400).json({
+                    error:"Something went wrong"
+                })
+            })
+        }
+    })
+    .catch(err=>{
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+
+}
