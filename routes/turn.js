@@ -7,10 +7,10 @@ const { requireSignin,ownerMiddleware, ConductorMiddleware,passengerMiddleware }
 
 
 router.post('/addturn/:uid',requireSignin,ownerMiddleware,addTurn);
-router.get('/getturnbyroute',getTurnByRouteID)
+router.post('/getturnbyroute',getTurnByRouteID)
 router.get('/getactiveturns/:uid',requireSignin,ConductorMiddleware, getActiveTurnsByConductor)
 router.get('/getpastturns/:uid',requireSignin,ConductorMiddleware, getPastTurns)
-router.get('/getseatsdetailspassenger/:uid',requireSignin,passengerMiddleware,getSeatsDetailsOfTurnByPassenger)
+router.post('/getseatsdetailspassenger/:uid',requireSignin,passengerMiddleware,getSeatsDetailsOfTurnByPassenger)
 router.post('/getseatdetailsbyconductor/:uid',requireSignin,ConductorMiddleware,getSeatsDetailsOfTurnByPassengerConductor)
 router.post('/getpassengerfromseat/:uid',requireSignin, ConductorMiddleware,getPassengerOfTheSeatByConductor)
 
