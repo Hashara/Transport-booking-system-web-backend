@@ -1,37 +1,36 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
   "scripts": {
-    "start": "nodemon server.js",
-    "test": "jest"
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "test": "mocha --reporter spec"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": "10"
+  },
   "dependencies": {
     "@google/maps": "^1.1.0",
-    "@googlemaps/google-maps-services-js": "^2.4.2",
-    "@sendgrid/mail": "^6.5.3",
+    "@sendgrid/mail": "^7.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.3",
     "express-validator": "^6.4.0",
-    "firebase": "^7.9.3",
-    "firebase-admin": "^8.9.2",
-    "firebase-tools": "^7.3.1",
+    "firebase": "^7.13.2",
+    "firebase-admin": "^8.9.0",
+    "firebase-functions": "^3.3.0",
     "generate-password": "^1.5.1",
-    "gtfs-realtime-bindings": "0.0.5",
-    "jsonwebtoken": "^8.5.1",
-    "morgan": "^1.9.1",
-    "nodemon": "^2.0.2",
-    "socket.io": "^2.3.0",
-    "twilio": "^3.41.1"
+    "morgan": "^1.10.0",
+    "twilio": "^3.42.1"
   },
   "devDependencies": {
-    "supertest": "^4.0.2"
-  }
+    "firebase-functions-test": "^0.1.7",
+    "mocha": "^7.1.1"
+  },
+  "private": true
 }
