@@ -439,7 +439,7 @@ exports.getSeatsDetailsOfTurnByPassenger = (req,res) => {
 
 }
 
-exports.getSeatsDetailsOfTurnByPassengerConductor = (req,res) =>{
+exports.getSeatsDetailsOfTurnByConductor = (req,res) =>{
   
     const conductorUid = req.params.uid;
 
@@ -456,7 +456,7 @@ exports.getSeatsDetailsOfTurnByPassengerConductor = (req,res) =>{
                 error:"You don't have access"
             })
         }
-        else if(helpers.addMillis(doc.data().departureTime.toDate(),doc.data().duration)> new Date()){
+        else if(helpers.addMillis(doc.data().departureTime.toDate(),doc.data().duration)< new Date()){
             return res.status(400).json({
                 error:"You don't have access to past turns"
             })
