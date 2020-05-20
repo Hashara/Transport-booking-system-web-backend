@@ -81,3 +81,7 @@ exports.getSeat = (seatId, turnId) =>{
 exports.getBookingDeatailsBySeat = (turnId,seatId) =>{
     return turnRef.doc(turnId).collection('booking').doc(seatId).get()
 }
+
+exports.getFutureTurns= () => {
+    return turnRef.where('departureTime', '>=', new Date(new Date().getTime() + 3600)).get()
+}
