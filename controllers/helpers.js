@@ -36,3 +36,20 @@ exports.getOtherStation = (startStation,routeId) => {
         return splitedRoute[1]
     }
 }
+
+exports.isSameDate = (date1, date2) => {
+
+    // console.log(date1)
+    var datediff = date2.getTime() - date1.getTime()
+    return ((datediff / (1000 * 3600 * 24))<=1)
+    
+}
+
+// function isSame() {
+//     const date1 = new Date("2020-05-10T07:42:05.750Z")
+//     const date2 = new Date("2020-05-10T09:42:05.750Z")
+
+    
+//     var datediff = date2 - date1
+//     console
+// }

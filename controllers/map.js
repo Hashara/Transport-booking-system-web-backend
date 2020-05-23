@@ -1,99 +1,14 @@
 const googleMapapi =require('../APIs/map-api/googleapi');
 const turnModel = require('../models/turn')
-
-// exports.getRoutes1 = (req,res) => {
-//     const{ origin, destination} = req.body
-
-//     const getRouteDetails =  googleMapapi
-//     .googleMapsClient
-//     .directions({
-//         origin: origin,
-//         destination: destination,
-//         mode: 'transit',
-//         transit_mode:'bus',
-//         alternatives:true
-      
-//       },function(err, response) {
-          
-//             var routes=response.json.routes
-//             var i = 0
-//             // console.log(routes)
-//             var routeJson = {
-//               steps : []
-//             }
-            
-//             routes.forEach((route) => {
-    
-//               // console.log(i)
-//               i++;
-//               var legs = route.legs;
-    
-              
-//               legs.forEach((leg)=>{
-    
-//                 var steps = leg.steps
-//                 var route = []
-                
-        
-//                 steps.forEach((step)=>{
-                  
-//                   if (step.travel_mode === "TRANSIT"){
-//                     // console.log(step.transit_details.line.name)
-//                     // console.log(step.transit_details.line.short_name)
-                    
-//                     var stations = step.transit_details.line.name.split('-')
-//                     console.log(stations[0])
-//                     console.log(stations[1])
-//                     const station1 = stations[0]
-//                     const station2 = stations[1]
-//                     const routeNo = step.transit_details.line.short_name
-                  
-//                     var jsonData = {
-//                       "name":step.transit_details.line.name,
-//                       "short_name":step.transit_details.line.short_name,
-//                       "departure_stop":step.transit_details.departure_stop.name,
-//                       "arrival_stop":step.transit_details.arrival_stop.name,
-//                       "status": "AVAILABLE" //todo: get the status from the db
-//                     };
-                    
-//                     route.push(jsonData);
-    
-//                   }
-                 
-//                 })
-//                 routeJson.steps.push(route)
-//               })
-    
-             
-//             });
-//             if (!err) { 
-//               // console.log(i)
-//               if (i===0){
-//                 res.status(404)
-//                 return res.json({
-//                   message: `Sorry no buses found from ${origin} to ${destination}`
-//                 })
-    
-//               }
-//               return res.json({
-//                 routes:routeJson
-//                 // routes
-//               })
-//             }else{
-//               res.status(400)
-//               return res.json({
-//                 message:"Error occured",
-//                 error:err
-//               })
-//             }
-            
-//           });
-  
-// }
-
+const helpers = require('../controllers/helpers')
 
 exports.getRoutes = async (req,res) => {
-    const{ origin, destination} = req.body
+    // date is js object 
+    const{ origin, destination, date} = req.body
+
+    // const dateObject = new Date(date)
+
+    // console.log(dateObject.getTime())
 
     const getRouteDetails =  googleMapapi
     .googleMapsClient
@@ -156,7 +71,7 @@ exports.getRoutes = async (req,res) => {
         //     routes:routeJson
         //     // routes
         // })
-        getfromDB(res)
+        getfromDB(res,date)
     })
 
     .catch(err=>{
@@ -168,14 +83,15 @@ exports.getRoutes = async (req,res) => {
 }
 
 
-function getfromDB(res){
+function getfromDB(res,date){
 
     
     const getTurns = turnModel.getFutureTurns()
     getTurns
     .then(snapshot=>{
-        const routes_a = snapshot.docs.map(doc=>Object.assign(doc.data().routeId))
+        const routes_a = snapshot.docs.map(doc=>Object.assign(doc.data()))
         // const routes =  Object.keys(routes_a).map((key) => [key, json_data[key]]);
+        // console.log(routes_a[1].routeId === '5 Colombo Kurunegala')
         console.log(routes_a)
         
 
@@ -183,19 +99,30 @@ function getfromDB(res){
             console.log(routeJson.steps[j].length)
             for(var i = 0; i< routeJson.steps[j].length; i++){
                 // console.log(routeJson.steps[j][i].name)
-                console.log(routeJson.steps[j][i].short_name)
+                // console.log(routeJson.steps[j][i].short_name)
                 var stations =routeJson.steps[j][i].name.split('-')
 
                 const station1 = stations[0]
                 const station2 = stations[1]
 
-                console.log(routeJson.steps[j][i].short_name + " " + station1 + " " + station2)
+                // console.log(routeJson.steps[j][i].short_name + " " + station1 + " " + station2)
 
                 for (let route in routes_a){
-                    if(routes_a[route].toString() === routeJson.steps[j][i].short_name + " " + station1 + " " + station2 || routes_a[route].toString() === routeJson.steps[j][i].short_name + " " + station2 + " " + station1 ){
-                       
-                        routeJson.steps[j][i].status = 'AVAILABLE'
+                    // console.log(routes_a[route])
+                    console.log(routes_a[route].routeId)
+                    console.log(date)
+                    
+                    // helpers.isSameDate(date,departureTime)
+                    console.log(helpers.isSameDate(new Date(date),routes_a[route].departureTime.toDate()))
+                    console.log(routes_a[route].routeId)
+                    console.log(routeJson.steps[j][i].short_name + " " + station2 + " " + station1 )
+                    if (helpers.isSameDate(new Date(date),routes_a[route].departureTime.toDate()) && (routes_a[route].routeId === routeJson.steps[j][i].short_name + " " + station1 + " " + station2 || routes_a[route].routeId === routeJson.steps[j][i].short_name + " " + station2 + " " + station1 )){
+                            routeJson.steps[j][i].status = 'AVAILABLE'
+                            routeJson.steps[j][i].routeId = routes_a[route].routeId
+                        
                     }
+                    // routeJson.steps[j][i].n = routes_a[route].routeId
+                    
                     
                 }
             }
@@ -217,4 +144,3 @@ function getfromDB(res){
     })
 }
 
-// TODO: add date
