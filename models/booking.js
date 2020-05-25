@@ -122,3 +122,7 @@ exports.cancelBooking = (bookingId, turnId, seatId,passengerUID,price) =>{
 exports.getBookingDetails = (bookingId) =>{
     return bookingRef.doc(bookingId).get();
 }
+
+exports.getCanceledBookingForATurn = (turnId) => {
+    return cancelRef.where('turnId', '==', turnId).get()
+}

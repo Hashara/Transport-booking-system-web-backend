@@ -598,6 +598,166 @@ exports.ownerViewPastTurns = (req,res) => {
     ownertuns(res,getTurns)
 }
 
+exports.getFullDetailedTurn = (req,res) =>{
+    const ownerUid = req.params.uid;
+
+    const { turnId } = req.body
+
+    const getTurn = turnModel.getTurnByTurnID(turnId)
+    getTurn
+    .then(doc => {
+        if (doc.data().ownerUid !== ownerUid){
+            return res.status(403).json({
+                message: "You dont have access"
+            })
+        }
+        else{
+            
+            const busId = doc.data().busId
+            const startStation = doc.data().startStation            
+            const addedDate = doc.data().addedDate
+            const ConductorId = doc.data().ConductorId
+            const departureTime = doc.data().departureTime
+            const TypeName = doc.data().TypeName
+
+            const getBooking = turnModel.getAllSeats(turnId)
+            
+            getBooking
+            .then(snapshots => {
+                var seats = snapshots.docs.map(doc => 
+                    Object.assign({
+                    id: doc.id,
+                    status : doc.data().status,
+                    seatType: doc.data().seatType,
+                    price: doc.data().price
+                    })
+                )
+
+                var windowSeatsEarning = 0
+                var jumpingSeatsEarning = 0
+                var normalSeatsEarning = 0
+
+                const getAllBookedSeats = turnModel.getBookedSeats(turnId)
+                getAllBookedSeats
+                .then(snapshots =>{
+                    snapshots.forEach(doc =>{
+
+                        if (doc.data().seatType === 'NORMAL'){
+                            normalSeatsEarning += doc.data().price
+                        }
+                        else if (doc.data().seatType === 'WINDOW'){
+                            windowSeatsEarning += doc.data().price
+                        }
+                        else{
+                            jumpingSeatsEarning += doc.data().price
+                        }
+
+                    })
+                })
+                .then(()=>{
+
+                    const getConductorDetails = conductorModel.getConductorFromUid(ConductorId)
+                    getConductorDetails
+                    .then(doc => {
+                        
+                        const address = doc.data().address
+                        const NIC = doc.data().NIC
+                        
+                        const getOtherDetails = userModel.getUserData(ConductorId)
+                        getOtherDetails
+                        .then(doc=>{
+                           
+                            const name = doc.data().firstName + " " + doc.data().secondName
+                            const phoneNumber = doc.data().phoneNumber
+                            const email = doc.data().email
+        
+                            const getBusDetails = busModel.getBusFromBusId(busId)
+                            getBusDetails
+                            .then(doc=>{
+                               
+                                const NormalSeatPrice = doc.data().NormalSeatPrice
+                                const windowSeatPrice = doc.data().windowSeatPrice
+                                const busNo = doc.data().busNo
+                                const JumpingSeatPrice = doc.data().JumpingSeatPrice
+
+                                const getCanceledBooking = bookingModel.getCanceledBookingForATurn(turnId)
+                                getCanceledBooking
+                                .then(snapshots=> {
+                                    // console.log()
+                                    var canceledBooking = 0
+                                    var i = 0 
+                                    snapshots.forEach(doc=>{
+                                        
+                                        i += 1
+                                        canceledBooking += doc.data().penalty
+
+                                        if (i === snapshots.size){
+                                            return res.status(200).json({
+                                                turnId,
+                                                busId,
+                                                NormalSeatPrice,
+                                                windowSeatPrice,
+                                                JumpingSeatPrice,
+                                                busNo,
+                                                startStation,
+                                                addedDate,
+                                                departureTime,
+                                                TypeName,
+                                                seats:seats,
+                                                windowSeatsEarning,
+                                                normalSeatsEarning,
+                                                jumpingSeatsEarning,
+                                                canceledBooking,
+                                                total_erning: windowSeatsEarning + normalSeatsEarning + jumpingSeatsEarning + canceledBooking,
+                                                conductor_detils:{
+                                                    ConductorId,
+                                                    NIC,
+                                                    name,
+                                                    phoneNumber, 
+                                                    address,
+                                                    email
+                                                }
+                                            })
+                                        }
+                                    })
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    return res.status(400).json({
+                                        error:"Something went wrong"
+                                    })
+                                })           
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                return res.status(400).json({
+                                    error:"Something went wrong"
+                                })
+                            })
+                        })
+                        .catch(err => {
+                            // console.log(err)
+                            return res.status(400).json({
+                                error:"Something went wrong"
+                            })
+                        })
+                    })
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+            })
+            
+        }
+    })
+    .catch(err => {
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+
+}
+
 function ownertuns(res,getTurns){
     turnsJson = {
         turns : []

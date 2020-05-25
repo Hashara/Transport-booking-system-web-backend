@@ -99,3 +99,7 @@ exports.getPastTurnsByOwnerUID = (owneruid) => {
 
     return turnRef.where('departureTime', '<', new Date()).where('ownerUid', '==', owneruid).get()
 }
+
+exports.getBookedSeats = (turnId) =>{
+    return turnRef.doc(turnId).collection('booking').where('status','==',"Unavailable").get()
+}
