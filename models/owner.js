@@ -41,3 +41,7 @@ exports.createOwner = (uid,auid,firstName, secondName, email, phoneNumber,phone_
 
 
 }
+
+exports.getAllOwners = () => {
+    return ownerrRef.get()
+}

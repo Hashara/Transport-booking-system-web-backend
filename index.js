@@ -26,6 +26,7 @@ const newBusRoute = require('./routes/newBus')
 const BusRoute = require('./routes/bus')
 const TurnRoute = require('./routes/turn')
 const bookingRouter = require('./routes/booking')
+const ownerRouter = require('./routes/owner')
 
 // const functions = require('firebase-functions');
 
@@ -49,6 +50,7 @@ app.use('/api',newBusRoute)
 app.use('/api',BusRoute)
 app.use('/api',TurnRoute)
 app.use('/api',bookingRouter)
+app.use('/api',ownerRouter)
 
 
 // const port = process.env.PORT || 8000;
