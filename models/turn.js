@@ -85,3 +85,17 @@ exports.getBookingDeatailsBySeat = (turnId,seatId) =>{
 exports.getFutureTurns= () => {
     return turnRef.where('departureTime', '>=', new Date(new Date().getTime() + 3600)).get()
 }
+
+exports.getActiveTurnsByOwnerUID = (owneruid) => {
+    // return turnRef.where('ownerUid', '==', "121").get()
+    // return turnRef.where('departureTime', '>=', new Date()).get()
+
+    return turnRef.where('departureTime', '>=', new Date()).where('ownerUid', '==', owneruid).get()
+}
+
+exports.getPastTurnsByOwnerUID = (owneruid) => {
+    // return turnRef.where('ownerUid', '==', "121").get()
+    // return turnRef.where('departureTime', '>=', new Date()).get()
+
+    return turnRef.where('departureTime', '<', new Date()).where('ownerUid', '==', owneruid).get()
+}

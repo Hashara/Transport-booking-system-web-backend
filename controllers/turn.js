@@ -581,3 +581,139 @@ exports.getPassengerOfTheSeatByConductor = (req,res) =>{
     })
 
 }
+
+exports.ownerViewActiveTurns = (req,res) => {
+    const ownerUid = req.params.uid;
+
+    const getTurns = turnModel.getActiveTurnsByOwnerUID(ownerUid)
+  
+    ownertuns(res,getTurns)
+}
+
+exports.ownerViewPastTurns = (req,res) => {
+    const ownerUid = req.params.uid;
+
+    const getTurns = turnModel.getPastTurnsByOwnerUID(ownerUid)
+  
+    ownertuns(res,getTurns)
+}
+
+function ownertuns(res,getTurns){
+    turnsJson = {
+        turns : []
+    }
+    getTurns
+    .then(snapshots => {
+ 
+        if (snapshots.empty){
+            return res.status(200).json({
+                message:"You don't have active turns"
+            })
+        }
+        
+        console.log(snapshots.size)
+        var i = 0 
+        snapshots.forEach(doc=>{
+            // const turn = []
+            
+            const turnId = doc.id
+            // console.log(doc.id)
+            const busId = doc.data().busId
+            const startStation = doc.data().startStation            
+            const addedDate = doc.data().addedDate
+            const ConductorId = doc.data().ConductorId
+            const departureTime = doc.data().departureTime
+            const TypeName = doc.data().TypeName
+           
+            const getConductorDetails = conductorModel.getConductorFromUid(ConductorId)
+            getConductorDetails
+            .then(doc => {
+                // snapshots.forEach(doc=>{
+                    // console.log(doc.data())
+                // })
+                const address = doc.data().address
+                const NIC = doc.data().NIC
+
+                const getOtherDetails = userModel.getUserData(ConductorId)
+                getOtherDetails
+                .then(doc=>{
+                    // console.log(doc.data())
+                    const name = doc.data().firstName + " " + doc.data().secondName
+                    const phoneNumber = doc.data().phoneNumber
+                    const email = doc.data().email
+
+                    const getBusDetails = busModel.getBusFromBusId(busId)
+                    getBusDetails
+                    .then(doc=>{
+                        // console.log(doc.data())
+                        const NormalSeatPrice = doc.data().NormalSeatPrice
+                        const windowSeatPrice = doc.data().windowSeatPrice
+                        const busNo = doc.data().busNo
+                        const JumpingSeatPrice = doc.data().JumpingSeatPrice
+                        
+                        turnsJson.turns.push({
+                            turnId,
+                            busId,
+                            NormalSeatPrice,
+                            windowSeatPrice,
+                            JumpingSeatPrice,
+                            busNo,
+                            startStation,
+                            addedDate,
+                            departureTime,
+                            TypeName,
+                            
+                            conductor_detils:{
+                                ConductorId,
+                                NIC,
+                                name,
+                                phoneNumber, 
+                                address,
+                                email
+                            }
+                        })
+                        i++
+                        if (i === snapshots.size){
+                            // console.log(snapshots.size + "=================")
+                            return res.status(200).json({
+                                turnsJson
+                            })
+                        }
+
+                    })
+                    .catch(err => {
+                        // console.log(err)
+                        return res.status(400).json({
+                            error:"Something went wrong"
+                        })
+                    })
+                })
+                .catch(err => {
+                    // console.log(err)
+                    return res.status(400).json({
+                        error:"Something went wrong"
+                    })
+                })
+            })
+            .catch(err => {
+                // console.log(err)
+                return res.status(400).json({
+                    error:"Something went wrong"
+                })
+            })
+            
+            
+        })
+       
+        
+    })
+    // .then(()=>{
+    //     console.log(turnsJson.turns)
+    // })
+    .catch(err => {
+        // console.log(err)
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+}
