@@ -37,7 +37,8 @@ exports.getAllOwners = (req, res) => {
                     email,
                     phoneNumber,
                     address,
-                    NIC
+                    NIC,
+                    ownerUid                    
                 })
 
                 i += 1
