@@ -191,3 +191,46 @@ exports.cancelBooking = (req,res) => {
     // console.log(getHourDiff)
    
 }
+
+exports.passengerViewPastBooking = (req,res) => {
+
+    const passengerUID = req.params.uid
+
+    const getBookedTurns = bookingModel.getPastBookingsByPassenger(passengerUID)
+
+    passengerBooking (getBookedTurns,res)
+    
+}
+
+exports.passengerViewActiveBooking = (req,res) => {
+    const passengerUID = req.params.uid
+
+    const getBookedTurns = bookingModel.getActiveBookingsByPassenger(passengerUID)
+
+    passengerBooking (getBookedTurns,res)
+}
+
+
+function passengerBooking (getBookedTurns,res){
+    getBookedTurns
+    .then(snapshot => {
+        // snapshot.forEach(doc => {
+        //     console.log(doc.data())
+        // })
+        if (snapshot.empty){
+            return res.status(200).json({
+                message:"No turns found"
+            })
+        }
+        const turns = snapshot.docs.map(doc => Object.assign(doc.data(), {bookingid: doc.id}))
+        return res.status(200).json({
+            turns
+        })
+    })
+    .catch(err=>{
+        console.log(err)
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+}

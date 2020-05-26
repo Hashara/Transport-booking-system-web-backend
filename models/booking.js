@@ -126,3 +126,11 @@ exports.getBookingDetails = (bookingId) =>{
 exports.getCanceledBookingForATurn = (turnId) => {
     return cancelRef.where('turnId', '==', turnId).get()
 }
+
+exports.getPastBookingsByPassenger = (passengerId) => {
+    return passengerRef.doc(passengerId).collection('booking').where('departureTime', '<', new Date()).get()
+}
+
+exports.getActiveBookingsByPassenger = (passengerId) => {
+    return passengerRef.doc(passengerId).collection('booking').where('departureTime', '>=', new Date()).get()
+}
