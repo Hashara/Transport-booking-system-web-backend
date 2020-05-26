@@ -877,3 +877,136 @@ function ownertuns(res,getTurns){
         })
     })
 }
+
+exports.viewPastTurnsUsingCondutorIdByAdmin = (req, res) => {
+
+    const { ownerUid } = req.body
+
+    const getTurnDetails = turnModel.getPastTurnsByOwnerUID(ownerUid)
+
+    getTurnDetailsAdminFun(getTurnDetails,res)
+
+
+}
+
+exports.viewActiveTurnsUsingCondutorIdByAdmin = (req, res) => {
+
+    const { ownerUid } = req.body
+
+    const getTurnDetails = turnModel.getActiveTurnsByOwnerUID(ownerUid)
+
+    getTurnDetailsAdminFun(getTurnDetails,res)
+
+
+}
+
+function getTurnDetailsAdminFun(getTurnDetails,res){
+    turnsJson = {
+        turns : []
+    }
+    getTurnDetails
+    .then(snapshots => {
+        if (snapshots.empty){
+            return res.status(200).json({
+                message:"No past turns found"
+            })
+        }
+        var i = 0
+        var n = snapshots.size
+        console.log(n)
+       
+        snapshots.forEach(doc=>{
+            // console.log(doc.data())
+            // console.log(doc.id)
+            const turnId = doc.id
+            const TypeName = doc.data().TypeName
+            const busId = doc.data().busId
+            const startStation = doc.data().startStation
+            const duration = doc.data().duration
+            const addedDate = doc.data().addedDate
+            const departureTime = doc.data().departureTime
+            const routeId = doc.data().routeId
+
+            const getBusDetails = busModel.getBusFromBusId(busId)
+            getBusDetails
+            .then(doc => {
+                // console.log(doc.data())
+                const NormalSeatPrice = doc.data().NormalSeatPrice
+                const windowSeatPrice = doc.data().windowSeatPrice
+                const busNo = doc.data().busNo
+                const jumpingSeatPrice = doc.data().jumpingSeatPrice
+
+                var windowSeatsEarning = 0
+                var jumpingSeatsEarning = 0
+                var normalSeatsEarning = 0
+                
+                const getAllBookedSeats = turnModel.getBookedSeats(turnId)
+                getAllBookedSeats
+                .then(snapshots =>{
+                    i++
+                    console.log("k")
+                    snapshots.forEach(doc =>{
+
+                        if (doc.data().seatType === 'NORMAL'){
+                            normalSeatsEarning += doc.data().price
+                        }
+                        else if (doc.data().seatType === 'WINDOW'){
+                            windowSeatsEarning += doc.data().price
+                        }
+                        else{
+                            jumpingSeatsEarning += doc.data().price
+                        }
+
+                    })
+                })
+                .then(()=>{
+                    
+                    turnsJson.turns.push({
+                        turnId,
+                        TypeName,
+                        startStation,
+                        duration,
+                        addedDate,
+                        departureTime,
+                        routeId,
+                        NormalSeatPrice,
+                        windowSeatPrice,
+                        busNo,
+                        jumpingSeatPrice,
+                        windowSeatsEarning,
+                        jumpingSeatsEarning,
+                        normalSeatsEarning
+                    })
+
+
+                    if (i === n){
+                        
+                        console.log(turnsJson)
+                        return res.status(200).json({
+                            turnsJson
+                        })
+                    }
+                    
+                })
+                .catch(err => {
+                    return res.status(400).json({
+                        error:"Something went wrong"
+                    })
+                })
+ 
+            })
+            .catch(err => {
+                return res.status(400).json({
+                    error:"Something went wrong"
+                })
+            })
+        })
+
+    })
+    .catch(err => {
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+}
+
