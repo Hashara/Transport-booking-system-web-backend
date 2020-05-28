@@ -234,3 +234,69 @@ function passengerBooking (getBookedTurns,res){
         })
     })
 }
+
+exports.passengerToWaitingList = (req,res) => {
+    const passengerId = req.params.uid
+
+    const { turnId } = req.body
+
+    const availableSeats = bookingModel.getAvailableSeats(turnId)
+
+    availableSeats
+    .then(snapshot => {
+        if(snapshot.empty){
+            // console.log("empty")
+            const waitingId = turnId + " " + passengerId
+
+            //check already in waiting list
+            const passenerWaiting = bookingModel.getTheWaitingFromWaitingID(waitingId, passengerId)
+
+            passenerWaiting
+            .then(docSnapshot => {
+                if (docSnapshot.exists) {
+                    return res.status(400).json({
+                        message: "You are already in waiting list"
+                    })
+                  } else {
+                    // console.log("hi")
+                    const addTowaiting = bookingModel.addToWaitingList(waitingId, turnId, passengerId)
+                    addTowaiting
+                    .then(()=>{
+                        return res.status(200).json({
+                            message : "Added to waiting llist successfully"
+                        })
+                    })
+                    .catch(err=>{
+                        console.log(err)
+                        return res.status(400).json({
+                            error:"Something went wrong"
+                        })
+                    })
+
+                  }
+            })
+            .catch(err=>{
+                console.log(err)
+                return res.status(400).json({
+                    error:"Something went wrong"
+                })
+            })
+        }
+        // snapshot.forEach(doc => {
+        //     console.log(doc.data())
+        // })
+        else{
+            return res.status(400).json({
+                message: "You cannot be in waiting list when seats are available"
+            })
+        }
+    })
+    .catch(err=>{
+        console.log(err)
+        return res.status(400).json({
+            error:"Something went wrong"
+        })
+    })
+
+    
+}

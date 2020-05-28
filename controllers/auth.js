@@ -336,7 +336,7 @@ exports.passengerMiddleware = (req,res,next) => {
             if (role !== 'PASSENGER'){
                 res.status(400)
                 return res.json({
-                    error:"Conductor resource. Access denied"
+                    error:"Passenger resource. Access denied"
                 })
             }else{
                 next()

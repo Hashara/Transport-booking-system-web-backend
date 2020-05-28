@@ -134,3 +134,33 @@ exports.getPastBookingsByPassenger = (passengerId) => {
 exports.getActiveBookingsByPassenger = (passengerId) => {
     return passengerRef.doc(passengerId).collection('booking').where('departureTime', '>=', new Date()).get()
 }
+
+
+exports.addToWaitingList = (waitingId,turnId, passengerId) => {
+    let batch = db.batch();
+
+
+    let turnWaitDoc = turnRef.doc(turnId).collection('waiting').doc(waitingId)
+    batch.set(turnWaitDoc,{
+        passengerId
+    })
+
+    let passengerWaitDoc = passengerRef.doc(passengerId).collection('waiting').doc(waitingId)
+    batch.set(passengerWaitDoc,{
+        turnId
+    })
+
+    return batch.commit()
+}
+
+exports.waitingListOfPassenger = (passengerId) => {
+    return passengerRef.doc(passengerId).collection('waiting').get()
+}
+
+exports.getTheWaitingFromWaitingID = (waitingId, passengerId) => {
+    return passengerRef.doc(passengerId).collection('waiting').doc(waitingId).get()
+}
+
+exports.getAvailableSeats  = (turnId) => {
+    return turnRef.doc(turnId).collection('booking').where('status','==', "Available").get()
+}
