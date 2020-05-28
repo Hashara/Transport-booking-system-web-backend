@@ -263,7 +263,7 @@ exports.passengerToWaitingList = (req,res) => {
                     addTowaiting
                     .then(()=>{
                         return res.status(200).json({
-                            message : "Added to waiting llist successfully"
+                            message : "Added to waiting list successfully"
                         })
                     })
                     .catch(err=>{
