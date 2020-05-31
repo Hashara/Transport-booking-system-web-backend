@@ -1,4 +1,4 @@
-const admin = require('../firebase-admin/admin');
+const admin = require('firebase-admin')
 
 const db = admin.firestore();
 const newBusRequestRef = db.collection('newBusRequest');

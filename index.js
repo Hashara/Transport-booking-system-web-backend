@@ -6,6 +6,11 @@ const functions = require('firebase-functions');
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
+const admin = require('firebase-admin')
+const serviceAccount = require("./serviceAccountKey.json")
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+})
 
 const express = require('express')
 require('dotenv').config();
