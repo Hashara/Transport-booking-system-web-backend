@@ -92,11 +92,11 @@ function getfromDB(res,date){
         const routes_a = snapshot.docs.map(doc=>Object.assign(doc.data()))
         // const routes =  Object.keys(routes_a).map((key) => [key, json_data[key]]);
         // console.log(routes_a[1].routeId === '5 Colombo Kurunegala')
-        console.log(routes_a)
+        // console.log(routes_a)
         
 
         for (let j in routeJson.steps){
-            console.log(routeJson.steps[j].length)
+            // console.log(routeJson.steps[j].length)
             for(var i = 0; i< routeJson.steps[j].length; i++){
                 // console.log(routeJson.steps[j][i].name)
                 // console.log(routeJson.steps[j][i].short_name)
@@ -109,13 +109,13 @@ function getfromDB(res,date){
 
                 for (let route in routes_a){
                     // console.log(routes_a[route])
-                    console.log(routes_a[route].routeId)
-                    console.log(date)
+                    // console.log(routes_a[route].routeId)
+                    // console.log(date)
                     
-                    // helpers.isSameDate(date,departureTime)
-                    console.log(helpers.isSameDate(new Date(date),routes_a[route].departureTime.toDate()))
-                    console.log(routes_a[route].routeId)
-                    console.log(routeJson.steps[j][i].short_name + " " + station2 + " " + station1 )
+                    // // helpers.isSameDate(date,departureTime)
+                    // console.log(helpers.isSameDate(new Date(date),routes_a[route].departureTime.toDate()))
+                    // console.log(routes_a[route].routeId)
+                    // console.log(routeJson.steps[j][i].short_name + " " + station2 + " " + station1 )
                     if (helpers.isSameDate(new Date(date),routes_a[route].departureTime.toDate()) && (routes_a[route].routeId === routeJson.steps[j][i].short_name + " " + station1 + " " + station2 || routes_a[route].routeId === routeJson.steps[j][i].short_name + " " + station2 + " " + station1 )){
                             routeJson.steps[j][i].status = 'AVAILABLE'
                             routeJson.steps[j][i].routeId = routes_a[route].routeId

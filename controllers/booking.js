@@ -137,10 +137,10 @@ exports.cancelBooking = (req,res) => {
 
     const bookingIdSplited = bookingId.split(" ")
 
-    console.log(bookingIdSplited[0])
-    console.log(bookingIdSplited[1])
-    console.log(bookingIdSplited[2])
-    console.log(bookingIdSplited[3])
+    // console.log(bookingIdSplited[0])
+    // console.log(bookingIdSplited[1])
+    // console.log(bookingIdSplited[2])
+    // console.log(bookingIdSplited[3])
     const turnId = bookingIdSplited[0]+" " +bookingIdSplited[1]
     const passengerUID_fromBookingId = bookingIdSplited[2]
     const seatId =bookingIdSplited[3]

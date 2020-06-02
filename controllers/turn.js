@@ -388,7 +388,7 @@ exports.getSeatsDetailsOfTurnByPassenger = (req,res) => {
 
     getTurnData
     .then(doc=> {
-        console.log(doc.data())
+        // console.log(doc.data())
         // const departureTime = doc.data().departureTime.toDate()
         const differenceInhours = helpers.hourDiff(doc.data().departureTime.toDate())
         // console.log(getDifferenceInhours)
@@ -424,7 +424,7 @@ exports.getSeatsDetailsOfTurnByPassenger = (req,res) => {
 
         else{
             return res.status(200).json({
-                message: "You ca not book this bus"
+                message: "You can not book this bus"
             })
         }
     })
@@ -878,7 +878,7 @@ function ownertuns(res,getTurns){
     })
 }
 
-exports.viewPastTurnsUsingCondutorIdByAdmin = (req, res) => {
+exports.viewPastTurnsUsingOwnerIdByAdmin = (req, res) => {
 
     const { ownerUid } = req.body
 
@@ -889,7 +889,7 @@ exports.viewPastTurnsUsingCondutorIdByAdmin = (req, res) => {
 
 }
 
-exports.viewActiveTurnsUsingCondutorIdByAdmin = (req, res) => {
+exports.viewActiveTurnsUsingOwnerIdByAdmin = (req, res) => {
 
     const { ownerUid } = req.body
 
