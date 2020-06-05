@@ -3,7 +3,7 @@ const BusType  = require('../models/busType')
 
 exports.addBusType = (req,res) =>{
 
-    console.log("addBustype controller")
+    // console.log("addBustype controller")
     const { type,name,seats,windowSeats,jumpingSeats } = req.body;
 
     const addBusType = BusType.addBusType(type,name,seats,windowSeats,jumpingSeats)

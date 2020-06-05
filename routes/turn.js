@@ -3,8 +3,8 @@ const router = express.Router()
 
 const { addTurn, getTurnByRouteID, getActiveTurnsByConductor,getPastTurns, 
     getSeatsDetailsOfTurnByPassenger,getSeatsDetailsOfTurnByConductor,getPassengerOfTheSeatByConductor,
-    ownerViewActiveTurns, ownerViewPastTurns,getFullDetailedTurn,viewPastTurnsUsingCondutorIdByAdmin,
-    viewActiveTurnsUsingCondutorIdByAdmin } = require('../controllers/turn')
+    ownerViewActiveTurns, ownerViewPastTurns,getFullDetailedTurn,viewPastTurnsUsingOwnerIdByAdmin,
+    viewActiveTurnsUsingOwnerIdByAdmin } = require('../controllers/turn')
 const { requireSignin,ownerMiddleware, ConductorMiddleware,passengerMiddleware,adminMiddleware } = require('../controllers/auth')
 
 
@@ -18,7 +18,7 @@ router.post('/getpassengerfromseat/:uid',requireSignin, ConductorMiddleware,getP
 router.get('/getactiveturnsbyowner/:uid',requireSignin,ownerMiddleware,ownerViewActiveTurns)
 router.get('/getpastturnsbyowner/:uid',requireSignin,ownerMiddleware, ownerViewPastTurns)
 router.post('/getturndetails/:uid',requireSignin,ownerMiddleware, getFullDetailedTurn)
-router.post('/getpastturnsofownerbyadmin/:uid',requireSignin,adminMiddleware,viewPastTurnsUsingCondutorIdByAdmin)
-router.post('/getactiveturnsofownerbyadmin/:uid',requireSignin,adminMiddleware,viewActiveTurnsUsingCondutorIdByAdmin)
+router.post('/getpastturnsofownerbyadmin/:uid',requireSignin,adminMiddleware,viewPastTurnsUsingOwnerIdByAdmin)
+router.post('/getactiveturnsofownerbyadmin/:uid',requireSignin,adminMiddleware,viewActiveTurnsUsingOwnerIdByAdmin)
 
 module.exports = router;

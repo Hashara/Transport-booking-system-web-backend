@@ -11,7 +11,7 @@ exports.addConductor = (req,res) =>{
     const { firstName, secondName, email, phoneNumber,address,nic } = req.body;
 
     const password = helpers.generatePassword();
-    console.log(password) // todo : uncomment this
+    // console.log(password) // todo : uncomment this
 
 
     const authConductor = userModel.registerNewUser(firstName, secondName, email, password, phoneNumber);
@@ -65,7 +65,7 @@ exports.addConductor = (req,res) =>{
 
     })
     .catch(err=>{
-        console.log(err.code)
+        // console.log(err.code)
         if (err.code==='auth/email-already-exists'){
             res.status(409)
             return res.json({

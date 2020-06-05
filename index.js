@@ -6,6 +6,11 @@ const functions = require('firebase-functions');
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
+const admin = require('firebase-admin')
+const serviceAccount = require("./serviceAccountKey.json")
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+})
 
 const express = require('express')
 require('dotenv').config();
@@ -58,6 +63,28 @@ app.use('/api',ownerRouter)
 // app.listen(port,() =>{
 //     console.log(`listening  to ${port}`)
 // });
+app.get('*', function (req, res, next) {
+    var requestTime = new Date().getTime(),
+          executionTime;
+  
+    setTimeout(() => {
+      res.send({
+        requestTime,
+        executionTime
+      });
+    }, 10000);
+  });
 
+  app.post('*', function (req, res, next) {
+    var requestTime = new Date().getTime(),
+          executionTime;
+  
+    setTimeout(() => {
+      res.send({
+        requestTime,
+        executionTime
+      });
+    }, 10000);
+  });
 // module.exports = app;
 exports.app = functions.https.onRequest(app);

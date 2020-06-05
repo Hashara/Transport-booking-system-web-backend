@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
-
-const admin = require('../firebase-admin/admin')
+const admin = require('firebase-admin')
 const firebaseClient = require('../firebase-admin/firebase')
 
 const db = admin.firestore();
