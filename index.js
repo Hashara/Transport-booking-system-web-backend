@@ -63,6 +63,28 @@ app.use('/api',ownerRouter)
 // app.listen(port,() =>{
 //     console.log(`listening  to ${port}`)
 // });
+app.get('*', function (req, res, next) {
+    var requestTime = new Date().getTime(),
+          executionTime;
+  
+    setTimeout(() => {
+      res.send({
+        requestTime,
+        executionTime
+      });
+    }, 10000);
+  });
 
+  app.post('*', function (req, res, next) {
+    var requestTime = new Date().getTime(),
+          executionTime;
+  
+    setTimeout(() => {
+      res.send({
+        requestTime,
+        executionTime
+      });
+    }, 10000);
+  });
 // module.exports = app;
 exports.app = functions.https.onRequest(app);

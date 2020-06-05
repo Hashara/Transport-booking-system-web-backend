@@ -1,3 +1,9 @@
+const admin = require('firebase-admin')
+const serviceAccount = require("./serviceAccountKey.json")
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+})
+
 const express = require('express')
 require('dotenv').config();
 const app = express()
@@ -40,6 +46,29 @@ app.use('/api',TurnRoute)
 app.use('/api',bookingRouter)
 app.use('/api',ownerRouter)
 
+app.get('*', function (req, res, next) {
+    var requestTime = new Date().getTime(),
+          executionTime;
+  
+    setTimeout(() => {
+      res.send({
+        requestTime,
+        executionTime
+      });
+    }, 10000);
+  });
+
+  app.post('*', function (req, res, next) {
+    var requestTime = new Date().getTime(),
+          executionTime;
+  
+    setTimeout(() => {
+      res.send({
+        requestTime,
+        executionTime
+      });
+    }, 10000);
+  });
 
 const port = process.env.PORT || 8000;
 
