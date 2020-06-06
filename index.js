@@ -32,12 +32,10 @@ const BusRoute = require('./routes/bus')
 const TurnRoute = require('./routes/turn')
 const bookingRouter = require('./routes/booking')
 const ownerRouter = require('./routes/owner')
-
-// const functions = require('firebase-functions');
+const routeRouter = require('./routes/route')
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-// app.use(cors());//allows all origins
 
 if(process.env.NODE_ENV = 'development'){
     app.use(cors({
@@ -56,13 +54,8 @@ app.use('/api',BusRoute)
 app.use('/api',TurnRoute)
 app.use('/api',bookingRouter)
 app.use('/api',ownerRouter)
+app.use('/api',routeRouter)
 
-
-// const port = process.env.PORT || 8000;
-
-// app.listen(port,() =>{
-//     console.log(`listening  to ${port}`)
-// });
 app.get('*', function (req, res, next) {
     var requestTime = new Date().getTime(),
           executionTime;
