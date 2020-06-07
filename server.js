@@ -23,7 +23,7 @@ const BusRoute = require('./routes/bus')
 const TurnRoute = require('./routes/turn')
 const bookingRouter = require('./routes/booking')
 const ownerRouter = require('./routes/owner')
-
+const routeRouter = require('./routes/route')
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -45,6 +45,7 @@ app.use('/api',BusRoute)
 app.use('/api',TurnRoute)
 app.use('/api',bookingRouter)
 app.use('/api',ownerRouter)
+app.use('/api',routeRouter)
 
 app.get('*', function (req, res, next) {
     var requestTime = new Date().getTime(),

@@ -19,3 +19,7 @@ exports.addNewRoute = (routeNo, destination, origin,duration,routeId) => {
 exports.getRoute = (routeId) => {
     return routeRef.doc(routeId).get()
 }
+
+exports.getAllroutes = () => {
+    return routeRef.get()
+}
