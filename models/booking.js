@@ -9,7 +9,7 @@ const turnModel = require('../models/turn')
 const cancelRef = db.collection('cancelledBooking')
 
 exports.addBooking = (seatIdArray, turnId, passengerUID,startStation, endStation, conductorPhone, routeId,
-     bustype, departureTime, arrivalTime, busNo,priceArray,res) => {
+     bustype, departureTime, arrivalTime, busNo,priceArray,paymentId,payerId,res) => {
     
     let batch = db.batch();
 
@@ -58,7 +58,9 @@ exports.addBooking = (seatIdArray, turnId, passengerUID,startStation, endStation
             arrivalTime,
             bustype,
             paymentState: "Paid",
-            date
+            date,
+            paymentId,
+            payerId
 
 
         })

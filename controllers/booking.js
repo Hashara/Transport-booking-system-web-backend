@@ -8,7 +8,7 @@ const helpers = require('../controllers/helpers')
 exports.bookSeats = (req,res) => {
     const passengerUID = req.params.uid;
 
-    const { seatIdArray, turnId, startStation, endStation } = req.body
+    const { seatIdArray, turnId, startStation, endStation,paymentId,payerId } = req.body
 
     //check sear array 1-4 
     if (seatIdArray.length> 4 || seatIdArray <1){
@@ -17,13 +17,13 @@ exports.bookSeats = (req,res) => {
         })
     }
     else{
-        console.log("1")
+        // console.log("1")
         const getTurnDetails = turnModel.getTurnByTurnID(turnId)
 
         getTurnDetails
         .then(doc=>{
             // console.log(doc.data())
-            console.log("2")
+            // console.log("2")
             const busId = doc.data().busId
             const ConductorId = doc.data().ConductorId
             const departureTime =doc.data().departureTime.toDate()
@@ -77,7 +77,7 @@ exports.bookSeats = (req,res) => {
                                         //  const bookSeats =  bookingModel.addBooking(seatIdArray, turnId, passengerUID,startStation, endStation, conductorPhone, routeId,bustype, departureTime, arrivalTime, busNo)
                                         if (i === seatIdArray.length){
                                             console.log("if")
-                                            const bookSeats =  bookingModel.addBooking(seatIdArray, turnId, passengerUID,startStation, endStation, conductorPhone, routeId,bustype, departureTime, arrivalTime, busNo,priceArray,res)
+                                            const bookSeats =  bookingModel.addBooking(seatIdArray, turnId, passengerUID,startStation, endStation, conductorPhone, routeId,bustype, departureTime, arrivalTime, busNo,priceArray,paymentId,payerId,res)
                                         
                                                                                    
                                         }
