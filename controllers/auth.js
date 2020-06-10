@@ -126,9 +126,7 @@ exports.activation = (req,res) =>{
 exports.signin = (req, res) =>{ 
     const {email, password} = req.body
 
-    //todo: check sign in by email or phone
-    //if email
-   
+    // call firebase auth sign in with email  
     const emailSignin = userModel.emailSignin(email,password)
 
     emailSignin.then((user)=>{
@@ -143,12 +141,11 @@ exports.signin = (req, res) =>{
 
             //get role
             const getUserDetails = userModel.getUserData(uid);
-            //  var role;
+            
             getUserDetails.then(doc => {
                 if (!doc.exists) {
-                    console.log('No such document!');
-                    // role= "PASSENGER"
-                    // return role
+                    // console.log('No such document!');
+                    
                     res.status(400)
                     return res.json({
                         error:"Error data not found"
@@ -157,8 +154,8 @@ exports.signin = (req, res) =>{
                     // console.log(doc.data().role);
                     var role = doc.data().role
                     var phone_verified = doc.data().phone_verified
-                    console.log(role+"Method")
-                    // return role
+                    // console.log(role+"Method")
+                  
                     return res.json({
                         message:"Sign in success",
                         token,
