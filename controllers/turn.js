@@ -137,7 +137,6 @@ exports.getTurnByRouteID = (req,res) => {
 
     getTurns
     .then(snapshot=>{
-        // console.log(doc.data())
         if(snapshot.empty){
             return res.status(200).json({
                 message:"No turns found"
@@ -602,7 +601,6 @@ exports.getFullDetailedTurn = (req,res) =>{
     const ownerUid = req.params.uid;
 
     const { turnId } = req.body
-
     const getTurn = turnModel.getTurnByTurnID(turnId)
     getTurn
     .then(doc => {
@@ -612,6 +610,7 @@ exports.getFullDetailedTurn = (req,res) =>{
             })
         }
         else{
+            // console.log("hi")
             
             const busId = doc.data().busId
             const startStation = doc.data().startStation            
@@ -624,6 +623,7 @@ exports.getFullDetailedTurn = (req,res) =>{
             
             getBooking
             .then(snapshots => {
+                // console.log("getBooking")
                 var seats = snapshots.docs.map(doc => 
                     Object.assign({
                     id: doc.id,
@@ -641,7 +641,7 @@ exports.getFullDetailedTurn = (req,res) =>{
                 getAllBookedSeats
                 .then(snapshots =>{
                     snapshots.forEach(doc =>{
-
+                        // console.log("foreach")
                         if (doc.data().seatType === 'NORMAL'){
                             normalSeatsEarning += doc.data().price
                         }
@@ -655,7 +655,7 @@ exports.getFullDetailedTurn = (req,res) =>{
                     })
                 })
                 .then(()=>{
-
+                    // console.log("then")
                     const getConductorDetails = conductorModel.getConductorFromUid(ConductorId)
                     getConductorDetails
                     .then(doc => {
@@ -666,7 +666,7 @@ exports.getFullDetailedTurn = (req,res) =>{
                         const getOtherDetails = userModel.getUserData(ConductorId)
                         getOtherDetails
                         .then(doc=>{
-                           
+                            // console.log("get")
                             const name = doc.data().firstName + " " + doc.data().secondName
                             const phoneNumber = doc.data().phoneNumber
                             const email = doc.data().email
@@ -674,7 +674,7 @@ exports.getFullDetailedTurn = (req,res) =>{
                             const getBusDetails = busModel.getBusFromBusId(busId)
                             getBusDetails
                             .then(doc=>{
-                               
+                            //    console.log("bus")
                                 const NormalSeatPrice = doc.data().NormalSeatPrice
                                 const windowSeatPrice = doc.data().windowSeatPrice
                                 const busNo = doc.data().busNo
@@ -683,14 +683,44 @@ exports.getFullDetailedTurn = (req,res) =>{
                                 const getCanceledBooking = bookingModel.getCanceledBookingForATurn(turnId)
                                 getCanceledBooking
                                 .then(snapshots=> {
-                                    // console.log()
                                     var canceledBooking = 0
+
+                                    // console.log("cancel")
+                                    // console.log(snapshots.empty)
+                                    if (snapshots.empty){
+                                        return res.status(200).json({
+                                                turnId,
+                                                busId,
+                                                NormalSeatPrice,
+                                                windowSeatPrice,
+                                                JumpingSeatPrice,
+                                                busNo,
+                                                startStation,
+                                                addedDate,
+                                                departureTime,
+                                                TypeName,
+                                                seats:seats,
+                                                windowSeatsEarning,
+                                                normalSeatsEarning,
+                                                jumpingSeatsEarning,
+                                                canceledBooking,
+                                                total_erning: windowSeatsEarning + normalSeatsEarning + jumpingSeatsEarning + canceledBooking,
+                                                conductor_detils:{
+                                                    ConductorId,
+                                                    NIC,
+                                                    name,
+                                                    phoneNumber, 
+                                                    address,
+                                                    email
+                                                }
+                                            })
+                                    }
                                     var i = 0 
                                     snapshots.forEach(doc=>{
                                         
                                         i += 1
                                         canceledBooking += doc.data().penalty
-
+                                        // console.log(i)
                                         if (i === snapshots.size){
                                             return res.status(200).json({
                                                 turnId,
@@ -720,6 +750,8 @@ exports.getFullDetailedTurn = (req,res) =>{
                                             })
                                         }
                                     })
+
+                                    // return res.status(200)
                                 })
                                 .catch(err => {
                                     console.log(err)
